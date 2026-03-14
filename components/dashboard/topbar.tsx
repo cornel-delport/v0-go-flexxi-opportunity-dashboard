@@ -1,16 +1,9 @@
-"use client";
+'use client';
 
 import { Bell, Search, User } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { UserNav } from "./user-nav"; // I will create this component next
 
 interface TopbarProps {
   title: string;
@@ -42,29 +35,7 @@ export function Topbar({ title, description }: TopbarProps) {
           <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-primary" />
         </Button>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              className="flex items-center gap-2 px-2"
-            >
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary">
-                <User className="h-4 w-4 text-muted-foreground" />
-              </div>
-              <span className="hidden text-sm font-medium text-foreground md:inline">
-                Admin
-              </span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Preferences</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Sign out</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <UserNav />
       </div>
     </header>
   );
