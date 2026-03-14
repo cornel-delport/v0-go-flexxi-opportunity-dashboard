@@ -1,6 +1,9 @@
+"use client";
 import { useEffect, useState, createContext, useContext } from 'react';
-import { onAuthStateChanged, User } from 'firebase/auth';
-import { auth } from '@/lib/firebase/client';
+import { onAuthStateChanged } from 'firebase/auth';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { auth, db } from '@/lib/firebase/client';
+import { User } from '@/lib/types';
 
 export const SessionContext = createContext<User | null>(null);
 
@@ -9,9 +12,20 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setSession(user);
-      setLoading(false);
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userRef = doc(db, 'users', user.uid);
+        onSnapshot(userRef, (doc) => {
+          if (doc.exists()) {
+            const { role } = doc.data();
+            setSession({ ...user, role });
+          }
+          setLoading(false);
+        });
+      } else {
+        setSession(null);
+        setLoading(false);
+      }
     });
 
     return () => unsubscribe();

@@ -1,5 +1,9 @@
 import * as admin from 'firebase-admin';
 
+if (!process.env.FIREBASE_PRIVATE_KEY) {
+  throw new Error('Missing FIREBASE_PRIVATE_KEY environment variable');
+}
+
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert({

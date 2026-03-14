@@ -1,10 +1,10 @@
-"""
 // lib/roles/withAuthorization.tsx
 
 import { useSession } from "@/lib/useSession";
-import { hasPermission, Resource, Action } from "./index";
+import { hasPermission, Resource, Action, Role } from "./index";
 import { useRouter } from "next/navigation";
 import { ComponentType } from 'react';
+import { User } from "@/lib/types";
 
 interface WithAuthorizationProps {
   // You can add any additional props needed by the wrapped component here
@@ -25,7 +25,7 @@ export function withAuthorization<P extends WithAuthorizationProps>(
       return null; // or a loading component
     }
 
-    if (!hasPermission(user.role, resource, action)) {
+    if (!hasPermission(user.role as Role, resource, action)) {
       // User does not have the required permission
       // Redirect them to a "forbidden" page or another appropriate page
       router.push("/forbidden");
@@ -42,5 +42,3 @@ export function withAuthorization<P extends WithAuthorizationProps>(
 
   return WithAuthorization;
 }
-
-"""

@@ -1,4 +1,4 @@
-"""
+export const runtime = 'nodejs';
 // app/api/admin/users/route.ts
 import { NextResponse } from 'next/server';
 import { authorize } from '@/lib/roles/utils';
@@ -17,9 +17,8 @@ export async function GET() {
     // 3. Return the user data
     return NextResponse.json(users);
   } catch (error) {
-    console.error('Failed to fetch users:', error.message);
+    console.error('Failed to fetch users:', (error as Error).message);
     // Return a generic error response
     return new NextResponse('Internal Server Error', { status: 500 });
   }
 }
-"""

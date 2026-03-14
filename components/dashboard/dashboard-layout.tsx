@@ -12,7 +12,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     <div className="flex min-h-screen bg-background">
       <Sidebar />
       <main className="flex flex-1 flex-col overflow-hidden">
-        <Topbar />
+        <Topbar title="Dashboard" />
         {children}
       </main>
     </div>

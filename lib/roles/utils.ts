@@ -1,4 +1,3 @@
-"""
 // lib/roles/utils.ts
 import { cookies } from 'next/headers';
 import { auth } from '@/lib/firebase/server';
@@ -20,7 +19,7 @@ interface UserData {
  * or rejects with an error if unauthorized.
  */
 export async function authorize(resource: Resource, action: Action): Promise<UserData> {
-  const sessionCookie = cookies().get('session')?.value;
+  const sessionCookie = (await cookies()).get('session')?.value;
   if (!sessionCookie) {
     throw new Error('Unauthorized: No session cookie provided.');
   }
@@ -44,9 +43,8 @@ export async function authorize(resource: Resource, action: Action): Promise<Use
 
     return { uid, role: userRole };
   } catch (error) {
-    console.error('Authorization error:', error.message);
+    console.error('Authorization error:', (error as Error).message);
     // Re-throw a generic error to avoid leaking implementation details
     throw new Error('An error occurred during authorization.');
   }
 }
-"""

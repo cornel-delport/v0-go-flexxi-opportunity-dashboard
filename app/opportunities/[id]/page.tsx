@@ -52,11 +52,11 @@ function formatDateTime(dateString: string): string {
 }
 
 interface PageProps {
-  params: Promise<{ id: string }>;
+  params: { id: string };
 }
 
 export default async function OpportunityDetailPage({ params }: PageProps) {
-  const { id } = await params;
+  const { id } = params;
   const opportunity = mockOpportunities.find((opp) => opp.id === id);
 
   if (!opportunity) {
@@ -256,7 +256,7 @@ export default async function OpportunityDetailPage({ params }: PageProps) {
               </CardHeader>
               <CardContent>
                 <div className="flex flex-wrap gap-2">
-                  {opportunity.tags.map((tag) => (
+                  {opportunity.tags.map((tag: string) => (
                     <span
                       key={tag}
                       className="rounded-md bg-secondary px-2 py-1 text-sm text-foreground"

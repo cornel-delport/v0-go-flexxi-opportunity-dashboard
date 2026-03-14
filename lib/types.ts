@@ -1,3 +1,9 @@
+import { User as FirebaseUser } from 'firebase/auth';
+
+export type User = FirebaseUser & {
+  role: string;
+};
+
 export type OpportunityType =
   | "fan-travel"
   | "concert-demand"
@@ -6,15 +12,8 @@ export type OpportunityType =
   | "expat-travel"
   | "charter";
 
-export type OpportunityStatus =
-  | "new"
-  | "under-review"
-  | "approved"
-  | "rejected"
-  | "archived";
-
-export type ComplianceStatus = "verified" | "pending" | "flagged" | "unknown";
-
+export type OpportunityStatus = "new" | "under-review" | "approved" | "rejected" | "archived";
+export type ComplianceStatus = "pending" | "verified" | "flagged" | "unknown";
 export type SourceType =
   | "reddit"
   | "twitter"

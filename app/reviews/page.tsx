@@ -117,7 +117,7 @@ export default function ReviewsPage() {
             ) : (
               <div className="space-y-3">
                 {pendingReviews.map((review) => {
-                  const config = statusConfig[review.status];
+                  const config = statusConfig[review.status as keyof typeof statusConfig];
                   const StatusIcon = config.icon;
 
                   return (
@@ -196,7 +196,7 @@ export default function ReviewsPage() {
               <CardContent className="p-0">
                 <div className="divide-y divide-border">
                   {completedReviews.map((review) => {
-                    const config = statusConfig[review.status];
+                    const config = statusConfig[review.status as keyof typeof statusConfig];
                     const StatusIcon = config.icon;
 
                     return (

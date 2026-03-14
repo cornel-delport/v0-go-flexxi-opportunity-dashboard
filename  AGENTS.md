@@ -5,7 +5,15 @@
 - Always check that existing tests still pass after changes
 - If you add a new dependency, update both package.json AND dev.nix
 ```
+BEFORE every change:
+- List all files you will modify
+- For each file, confirm it currently has no errors
+- Do NOT modify files unrelated to the requested feature
 
+AFTER every change:
+- Run npm run check
+- If any new errors appeared that didn't exist before, fix them immediately
+- Do not consider the task done until npm run check passes cleanly
 ---
 
 ### 2. 🔁 Give Gemini a "Fix Loop" Prompt Template

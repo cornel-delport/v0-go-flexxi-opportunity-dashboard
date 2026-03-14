@@ -1,8 +1,9 @@
+export const runtime = 'nodejs';
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 
 export async function POST() {
-  cookies().delete('session');
+  const response = NextResponse.json({ status: 'success' });
+  response.cookies.delete('session');
 
-  return NextResponse.json({ status: 'success' });
+  return response;
 }

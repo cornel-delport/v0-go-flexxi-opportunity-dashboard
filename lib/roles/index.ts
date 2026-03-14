@@ -1,4 +1,3 @@
-"""
 // lib/roles/index.ts
 
 // 1. ROLE DEFINITIONS
@@ -150,5 +149,3 @@ export function hasPermission(role: Role, resource: Resource, action: Action): b
 //   // 4. Fallback to the base role permission
 //   return hasPermission(context.userRole, resource, action);
 // }
-
-""

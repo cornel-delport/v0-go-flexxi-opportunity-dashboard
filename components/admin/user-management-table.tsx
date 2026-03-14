@@ -3,8 +3,16 @@
 import { useState, useEffect } from 'react';
 import { ROLES, Role } from '@/lib/roles';
 
+interface User {
+  uid: string;
+  fullName: string;
+  email: string;
+  role: Role;
+  lastLoginAt: string;
+}
+
 // This is a placeholder. In a real app, you'd fetch this from an API.
-const mockUsers = [
+const mockUsers: User[] = [
   {
     uid: '1',
     fullName: 'Admin User',
@@ -29,7 +37,7 @@ const mockUsers = [
 ];
 
 export function UserManagementTable() {
-  const [users, setUsers] = useState(mockUsers);
+  const [users, setUsers] = useState<User[]>(mockUsers);
 
   const handleRoleChange = (uid: string, newRole: Role) => {
     // In a real app, you'd call an API to update the user's role.
