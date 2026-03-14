@@ -1,3 +1,5 @@
+"use client";
+
 import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
 import { Topbar } from "@/components/dashboard/topbar";
 import { KpiCard } from "@/components/dashboard/kpi-card";
