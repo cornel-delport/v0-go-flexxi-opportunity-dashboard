@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ExternalLink, MoreHorizontal, Eye, CheckCircle, XCircle } from "lucide-react";
+import { ExternalLink, MoreHorizontal, Eye, CheckCircle, XCircle, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,6 +10,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { StatusBadge, ComplianceBadge } from "./status-badge";
 import { SourceBadge } from "./source-badge";
 import { TypeBadge } from "./type-badge";
@@ -36,6 +42,68 @@ function formatDate(dateString: string): string {
   });
 }
 
+function ScoreBar({ 
+  value, 
+  label,
+  colorClass = "bg-primary"
+}: { 
+  value: number; 
+  label: string;
+  colorClass?: string;
+}) {
+  const getColorClass = (val: number) => {
+    if (val >= 90) return "bg-success";
+    if (val >= 75) return "bg-primary";
+    if (val >= 60) return "bg-warning";
+    return "bg-muted-foreground";
+  };
+
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div className="flex items-center gap-2 min-w-[100px]">
+            <div className="h-2 w-full overflow-hidden rounded-full bg-secondary">
+              <div
+                className={`h-full rounded-full transition-all ${colorClass === "bg-primary" ? getColorClass(value) : colorClass}`}
+                style={{ width: `${value}%` }}
+              />
+            </div>
+            <span className="text-xs font-medium text-muted-foreground w-8 text-right">
+              {value}%
+            </span>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{label}: {value}%</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
+
+function TrendIndicator({ trend }: { trend: "rising" | "stable" | "declining" }) {
+  if (trend === "rising") {
+    return (
+      <span className="flex items-center text-success">
+        <TrendingUp className="h-3 w-3" />
+      </span>
+    );
+  }
+  if (trend === "declining") {
+    return (
+      <span className="flex items-center text-destructive">
+        <TrendingDown className="h-3 w-3" />
+      </span>
+    );
+  }
+  return (
+    <span className="flex items-center text-muted-foreground">
+      <Minus className="h-3 w-3" />
+    </span>
+  );
+}
+
 export function OpportunitiesTable({ opportunities }: OpportunitiesTableProps) {
   if (opportunities.length === 0) {
     return (
@@ -52,16 +120,16 @@ export function OpportunitiesTable({ opportunities }: OpportunitiesTableProps) {
     <div className="overflow-x-auto rounded-lg border border-border">
       <table className="w-full">
         <thead className="bg-secondary/50">
-          <tr className="border-b border-border text-left text-sm text-muted-foreground">
+          <tr className="border-b border-border text-left text-xs text-muted-foreground uppercase tracking-wider">
             <th className="p-4 font-medium">Opportunity</th>
             <th className="p-4 font-medium">Type</th>
             <th className="p-4 font-medium">Source</th>
             <th className="p-4 font-medium">Status</th>
-            <th className="p-4 font-medium">Compliance</th>
-            <th className="p-4 font-medium">Group Size</th>
-            <th className="p-4 font-medium">Est. Revenue</th>
+            <th className="p-4 font-medium text-right">Group</th>
+            <th className="p-4 font-medium text-right">Revenue</th>
             <th className="p-4 font-medium">Confidence</th>
-            <th className="p-4 font-medium">Created</th>
+            <th className="p-4 font-medium">Monetization</th>
+            <th className="p-4 font-medium">Trend</th>
             <th className="p-4 font-medium"></th>
           </tr>
         </thead>
@@ -72,16 +140,18 @@ export function OpportunitiesTable({ opportunities }: OpportunitiesTableProps) {
               className="group text-sm transition-colors hover:bg-secondary/30"
             >
               <td className="p-4">
-                <div className="max-w-[300px]">
+                <div className="max-w-[280px]">
                   <Link
                     href={`/opportunities/${opp.id}`}
-                    className="font-medium text-foreground hover:text-primary"
+                    className="font-medium text-foreground hover:text-primary transition-colors"
                   >
                     {opp.title}
                   </Link>
-                  <p className="mt-0.5 truncate text-xs text-muted-foreground">
-                    {opp.location} • {formatDate(opp.eventDate)}
-                  </p>
+                  <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
+                    <span>{opp.location}</span>
+                    <span className="text-border">•</span>
+                    <span>{formatDate(opp.eventDate)}</span>
+                  </div>
                 </div>
               </td>
               <td className="p-4">
@@ -91,46 +161,29 @@ export function OpportunitiesTable({ opportunities }: OpportunitiesTableProps) {
                 <SourceBadge source={opp.source} />
               </td>
               <td className="p-4">
-                <StatusBadge status={opp.status} />
-              </td>
-              <td className="p-4">
-                <ComplianceBadge status={opp.complianceStatus} />
-              </td>
-              <td className="p-4 text-foreground">
-                {opp.groupSize.toLocaleString()}
-              </td>
-              <td className="p-4 font-medium text-foreground">
-                {formatCurrency(opp.estimatedRevenue)}
-              </td>
-              <td className="p-4">
-                <div className="flex items-center gap-2">
-                  <div className="h-1.5 w-16 overflow-hidden rounded-full bg-secondary">
-                    <div
-                      className={`h-full rounded-full ${
-                        opp.confidence >= 90
-                          ? "bg-success"
-                          : opp.confidence >= 75
-                          ? "bg-warning"
-                          : "bg-muted-foreground"
-                      }`}
-                      style={{ width: `${opp.confidence}%` }}
-                    />
-                  </div>
-                  <span
-                    className={`text-sm ${
-                      opp.confidence >= 90
-                        ? "text-success"
-                        : opp.confidence >= 75
-                        ? "text-warning"
-                        : "text-muted-foreground"
-                    }`}
-                  >
-                    {opp.confidence}%
-                  </span>
+                <div className="flex flex-col gap-1">
+                  <StatusBadge status={opp.status} />
+                  <ComplianceBadge status={opp.complianceStatus} />
                 </div>
               </td>
-              <td className="p-4 text-muted-foreground">
-                {formatDate(opp.createdAt)}
+              <td className="p-4 text-right">
+                <span className="font-medium text-foreground">
+                  {opp.groupSize.toLocaleString()}
+                </span>
+              </td>
+              <td className="p-4 text-right">
+                <span className="font-semibold text-foreground">
+                  {formatCurrency(opp.estimatedRevenue)}
+                </span>
+              </td>
+              <td className="p-4">
+                <ScoreBar value={opp.confidence} label="AI Confidence" />
+              </td>
+              <td className="p-4">
+                <ScoreBar value={opp.monetizationScore} label="Monetization Potential" />
+              </td>
+              <td className="p-4">
+                <TrendIndicator trend={opp.demandMetrics.growthTrend} />
               </td>
               <td className="p-4">
                 <DropdownMenu>

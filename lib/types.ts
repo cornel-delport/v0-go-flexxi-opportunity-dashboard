@@ -24,6 +24,53 @@ export type SourceType =
   | "discord"
   | "telegram";
 
+export interface SourcePost {
+  author: string;
+  authorAvatar?: string;
+  content: string;
+  engagement: {
+    likes: number;
+    comments: number;
+    shares: number;
+  };
+  postedAt: string;
+}
+
+export interface GroupDemandMetrics {
+  confirmedInterest: number;
+  potentialReach: number;
+  engagementRate: number;
+  growthTrend: "rising" | "stable" | "declining";
+  sentimentScore: number;
+}
+
+export interface RevenueProjection {
+  lowEstimate: number;
+  midEstimate: number;
+  highEstimate: number;
+  perPersonAverage: number;
+  marginPercent: number;
+}
+
+export interface ActivityEvent {
+  id: string;
+  type: "created" | "status_change" | "comment" | "assigned" | "ai_analysis" | "compliance_check";
+  description: string;
+  user: string;
+  userAvatar?: string;
+  timestamp: string;
+  metadata?: Record<string, unknown>;
+}
+
+export interface ReviewComment {
+  id: string;
+  reviewer: string;
+  reviewerAvatar?: string;
+  comment: string;
+  sentiment: "positive" | "neutral" | "concern";
+  timestamp: string;
+}
+
 export interface Opportunity {
   id: string;
   title: string;
@@ -33,11 +80,17 @@ export interface Opportunity {
   complianceStatus: ComplianceStatus;
   source: SourceType;
   sourceUrl: string;
+  sourcePost: SourcePost;
   location: string;
   eventDate: string;
   groupSize: number;
   estimatedRevenue: number;
   confidence: number;
+  monetizationScore: number;
+  demandMetrics: GroupDemandMetrics;
+  revenueProjection: RevenueProjection;
+  activities: ActivityEvent[];
+  reviewComments: ReviewComment[];
   createdAt: string;
   updatedAt: string;
   assignedTo?: string;

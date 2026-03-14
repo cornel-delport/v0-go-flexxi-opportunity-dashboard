@@ -11,12 +11,15 @@ import {
 import {
   Compass,
   TrendingUp,
+  TrendingDown,
+  Minus,
   Clock,
   CheckCircle,
   DollarSign,
   Target,
   ArrowUpRight,
   ExternalLink,
+  BarChart3,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -37,6 +40,37 @@ function formatDate(dateString: string): string {
     day: "numeric",
     year: "numeric",
   });
+}
+
+function ScoreBar({ value }: { value: number }) {
+  const getColorClass = (val: number) => {
+    if (val >= 90) return "bg-success";
+    if (val >= 75) return "bg-primary";
+    if (val >= 60) return "bg-warning";
+    return "bg-muted-foreground";
+  };
+
+  return (
+    <div className="flex items-center gap-2">
+      <div className="h-1.5 w-12 overflow-hidden rounded-full bg-secondary">
+        <div
+          className={`h-full rounded-full ${getColorClass(value)}`}
+          style={{ width: `${value}%` }}
+        />
+      </div>
+      <span className="text-xs font-medium text-muted-foreground">{value}%</span>
+    </div>
+  );
+}
+
+function TrendIndicator({ trend }: { trend: "rising" | "stable" | "declining" }) {
+  if (trend === "rising") {
+    return <TrendingUp className="h-3.5 w-3.5 text-success" />;
+  }
+  if (trend === "declining") {
+    return <TrendingDown className="h-3.5 w-3.5 text-destructive" />;
+  }
+  return <Minus className="h-3.5 w-3.5 text-muted-foreground" />;
 }
 
 export default function DashboardPage() {
@@ -121,9 +155,11 @@ export default function DashboardPage() {
                       <th className="pb-3 font-medium">Source</th>
                       <th className="pb-3 font-medium">Status</th>
                       <th className="pb-3 font-medium">Compliance</th>
-                      <th className="pb-3 font-medium">Group Size</th>
-                      <th className="pb-3 font-medium">Est. Revenue</th>
+                      <th className="pb-3 font-medium text-right">Group</th>
+                      <th className="pb-3 font-medium text-right">Revenue</th>
                       <th className="pb-3 font-medium">Confidence</th>
+                      <th className="pb-3 font-medium">Monetization</th>
+                      <th className="pb-3 font-medium">Trend</th>
                       <th className="pb-3 font-medium"></th>
                     </tr>
                   </thead>
@@ -158,24 +194,20 @@ export default function DashboardPage() {
                         <td className="py-4 pr-4">
                           <ComplianceBadge status={opp.complianceStatus} />
                         </td>
-                        <td className="py-4 pr-4 text-foreground">
+                        <td className="py-4 pr-4 text-right font-medium text-foreground">
                           {opp.groupSize.toLocaleString()}
                         </td>
-                        <td className="py-4 pr-4 font-medium text-foreground">
+                        <td className="py-4 pr-4 text-right font-semibold text-foreground">
                           {formatCurrency(opp.estimatedRevenue)}
                         </td>
                         <td className="py-4 pr-4">
-                          <span
-                            className={
-                              opp.confidence >= 90
-                                ? "text-success"
-                                : opp.confidence >= 75
-                                ? "text-warning"
-                                : "text-muted-foreground"
-                            }
-                          >
-                            {opp.confidence}%
-                          </span>
+                          <ScoreBar value={opp.confidence} />
+                        </td>
+                        <td className="py-4 pr-4">
+                          <ScoreBar value={opp.monetizationScore} />
+                        </td>
+                        <td className="py-4 pr-4">
+                          <TrendIndicator trend={opp.demandMetrics.growthTrend} />
                         </td>
                         <td className="py-4">
                           <Button
