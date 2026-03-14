@@ -13,6 +13,7 @@ import {
   ChevronRight,
   Zap,
   PlusCircle,
+  Kanban,
 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -47,6 +48,12 @@ const navItems = [
     href: "/submit",
     icon: PlusCircle,
     description: "Add opportunity",
+  },
+  {
+    label: "Campaigns",
+    href: "/campaigns",
+    icon: Kanban,
+    description: "Execution pipeline",
   },
   {
     label: "Sources",
