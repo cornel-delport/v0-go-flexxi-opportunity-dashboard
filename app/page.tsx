@@ -24,6 +24,10 @@ import {
   ArrowUpRight,
   ExternalLink,
   BarChart3,
+  Users,
+  UserCheck,
+  UserPlus,
+  Shield,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -329,6 +333,63 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
           </div>
+
+          {/* Team Access Summary */}
+          <Card className="border-border bg-card">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Team Access Summary
+                </CardTitle>
+                <Button variant="ghost" size="sm" asChild className="gap-1.5 text-xs text-primary hover:text-primary">
+                  <Link href="/users">
+                    Manage Users
+                    <ArrowUpRight className="h-3 w-3" />
+                  </Link>
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+                <div className="flex items-center gap-3 rounded-lg border border-border bg-secondary/30 p-3">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10">
+                    <Users className="h-4 w-4 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-lg font-bold text-foreground">8</p>
+                    <p className="text-xs text-muted-foreground">Total Users</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 rounded-lg border border-border bg-secondary/30 p-3">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-success/10">
+                    <UserCheck className="h-4 w-4 text-success" />
+                  </div>
+                  <div>
+                    <p className="text-lg font-bold text-foreground">6</p>
+                    <p className="text-xs text-muted-foreground">Active</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 rounded-lg border border-border bg-secondary/30 p-3">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-warning/10">
+                    <UserPlus className="h-4 w-4 text-warning" />
+                  </div>
+                  <div>
+                    <p className="text-lg font-bold text-foreground">1</p>
+                    <p className="text-xs text-muted-foreground">Pending</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 rounded-lg border border-border bg-secondary/30 p-3">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-chart-5/10">
+                    <Shield className="h-4 w-4 text-chart-5" />
+                  </div>
+                  <div>
+                    <p className="text-lg font-bold text-foreground">3</p>
+                    <p className="text-xs text-muted-foreground">Admins</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </DashboardLayout>
