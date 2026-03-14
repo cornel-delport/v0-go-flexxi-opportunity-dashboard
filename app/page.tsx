@@ -4,6 +4,7 @@ import { KpiCard } from "@/components/dashboard/kpi-card";
 import { StatusBadge, ComplianceBadge } from "@/components/dashboard/status-badge";
 import { SourceBadge } from "@/components/dashboard/source-badge";
 import { TypeBadge } from "@/components/dashboard/type-badge";
+import { OpportunityRadar } from "@/components/dashboard/opportunity-radar";
 import {
   mockDashboardStats,
   mockOpportunities,
@@ -244,6 +245,9 @@ export default function DashboardPage() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Opportunity Radar */}
+          <OpportunityRadar />
 
           {/* Quick Stats Grid */}
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
