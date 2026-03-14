@@ -117,33 +117,33 @@ export function OpportunitiesTable({ opportunities }: OpportunitiesTableProps) {
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-border">
+    <div className="overflow-x-auto rounded-xl border border-border bg-card">
       <table className="w-full">
-        <thead className="bg-secondary/50">
-          <tr className="border-b border-border text-left text-xs text-muted-foreground uppercase tracking-wider">
-            <th className="p-4 font-medium">Opportunity</th>
-            <th className="p-4 font-medium">Type</th>
-            <th className="p-4 font-medium">Source</th>
-            <th className="p-4 font-medium">Status</th>
-            <th className="p-4 font-medium text-right">Group</th>
-            <th className="p-4 font-medium text-right">Revenue</th>
-            <th className="p-4 font-medium">Confidence</th>
-            <th className="p-4 font-medium">Monetization</th>
-            <th className="p-4 font-medium">Trend</th>
-            <th className="p-4 font-medium"></th>
+        <thead>
+          <tr className="border-b border-border bg-secondary/30 text-left text-xs uppercase tracking-wider text-muted-foreground">
+            <th className="px-4 py-3 font-semibold">Opportunity</th>
+            <th className="px-4 py-3 font-semibold">Type</th>
+            <th className="px-4 py-3 font-semibold">Source</th>
+            <th className="px-4 py-3 font-semibold">Status</th>
+            <th className="px-4 py-3 font-semibold text-right">Group</th>
+            <th className="px-4 py-3 font-semibold text-right">Revenue</th>
+            <th className="px-4 py-3 font-semibold">Confidence</th>
+            <th className="px-4 py-3 font-semibold">Monetization</th>
+            <th className="px-4 py-3 font-semibold">Trend</th>
+            <th className="px-4 py-3 font-semibold"></th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-border bg-card">
+        <tbody className="divide-y divide-border/50">
           {opportunities.map((opp) => (
             <tr
               key={opp.id}
-              className="group text-sm transition-colors hover:bg-secondary/30"
+              className="group text-sm transition-colors duration-150 hover:bg-primary/5"
             >
-              <td className="p-4">
+              <td className="px-4 py-4">
                 <div className="max-w-[280px]">
                   <Link
                     href={`/opportunities/${opp.id}`}
-                    className="font-medium text-foreground hover:text-primary transition-colors"
+                    className="font-medium text-foreground transition-colors hover:text-primary"
                   >
                     {opp.title}
                   </Link>
@@ -154,44 +154,44 @@ export function OpportunitiesTable({ opportunities }: OpportunitiesTableProps) {
                   </div>
                 </div>
               </td>
-              <td className="p-4">
+              <td className="px-4 py-4">
                 <TypeBadge type={opp.type} />
               </td>
-              <td className="p-4">
+              <td className="px-4 py-4">
                 <SourceBadge source={opp.source} />
               </td>
-              <td className="p-4">
-                <div className="flex flex-col gap-1">
+              <td className="px-4 py-4">
+                <div className="flex flex-col gap-1.5">
                   <StatusBadge status={opp.status} />
                   <ComplianceBadge status={opp.complianceStatus} />
                 </div>
               </td>
-              <td className="p-4 text-right">
-                <span className="font-medium text-foreground">
+              <td className="px-4 py-4 text-right">
+                <span className="font-medium tabular-nums text-foreground">
                   {opp.groupSize.toLocaleString()}
                 </span>
               </td>
-              <td className="p-4 text-right">
-                <span className="font-semibold text-foreground">
+              <td className="px-4 py-4 text-right">
+                <span className="font-semibold tabular-nums text-foreground">
                   {formatCurrency(opp.estimatedRevenue)}
                 </span>
               </td>
-              <td className="p-4">
+              <td className="px-4 py-4">
                 <ScoreBar value={opp.confidence} label="AI Confidence" />
               </td>
-              <td className="p-4">
+              <td className="px-4 py-4">
                 <ScoreBar value={opp.monetizationScore} label="Monetization Potential" />
               </td>
-              <td className="p-4">
+              <td className="px-4 py-4">
                 <TrendIndicator trend={opp.demandMetrics.growthTrend} />
               </td>
-              <td className="p-4">
+              <td className="px-4 py-4">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="opacity-0 group-hover:opacity-100"
+                      className="h-8 w-8 opacity-0 transition-opacity group-hover:opacity-100"
                     >
                       <MoreHorizontal className="h-4 w-4" />
                     </Button>

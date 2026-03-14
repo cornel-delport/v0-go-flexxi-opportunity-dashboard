@@ -93,6 +93,8 @@ export default function DashboardPage() {
               value={stats.totalOpportunities.toLocaleString()}
               change="+12% from last month"
               changeType="positive"
+              trend="up"
+              trendValue="12%"
               icon={Compass}
             />
             <KpiCard
@@ -100,6 +102,8 @@ export default function DashboardPage() {
               value={stats.newThisWeek}
               change="+8 from yesterday"
               changeType="positive"
+              trend="up"
+              trendValue="8"
               icon={TrendingUp}
             />
             <KpiCard
@@ -107,6 +111,7 @@ export default function DashboardPage() {
               value={stats.pendingReview}
               change="5 high priority"
               changeType="neutral"
+              trend="stable"
               icon={Clock}
             />
             <KpiCard
@@ -114,6 +119,8 @@ export default function DashboardPage() {
               value={stats.approvedThisMonth}
               change="+23% conversion"
               changeType="positive"
+              trend="up"
+              trendValue="23%"
               icon={CheckCircle}
             />
             <KpiCard
@@ -121,6 +128,8 @@ export default function DashboardPage() {
               value={formatCurrency(stats.estimatedRevenue)}
               change="+18% from last month"
               changeType="positive"
+              trend="up"
+              trendValue="18%"
               icon={DollarSign}
             />
             <KpiCard
@@ -128,92 +137,99 @@ export default function DashboardPage() {
               value={`${stats.avgConfidence}%`}
               change="+2% improvement"
               changeType="positive"
+              trend="up"
+              trendValue="2%"
               icon={Target}
             />
           </div>
 
           {/* Recent Opportunities */}
-          <Card className="border-border bg-card">
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="text-lg font-semibold text-foreground">
-                Recent Opportunities
-              </CardTitle>
-              <Button variant="ghost" size="sm" asChild>
-                <Link href="/opportunities" className="text-primary">
+          <Card className="overflow-hidden border-border bg-card transition-all duration-200 hover:border-border/80">
+            <CardHeader className="flex flex-row items-center justify-between border-b border-border/50 bg-secondary/20 pb-4">
+              <div className="space-y-1">
+                <CardTitle className="text-lg font-semibold tracking-tight text-foreground">
+                  Recent Opportunities
+                </CardTitle>
+                <p className="text-xs text-muted-foreground">
+                  Latest discovered opportunities from all sources
+                </p>
+              </div>
+              <Button variant="outline" size="sm" asChild className="gap-1.5 border-border bg-secondary/50 hover:bg-secondary hover:text-primary">
+                <Link href="/opportunities">
                   View All
-                  <ArrowUpRight className="ml-1 h-4 w-4" />
+                  <ArrowUpRight className="h-3.5 w-3.5" />
                 </Link>
               </Button>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-0">
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-border text-left text-sm text-muted-foreground">
-                      <th className="pb-3 font-medium">Opportunity</th>
-                      <th className="pb-3 font-medium">Type</th>
-                      <th className="pb-3 font-medium">Source</th>
-                      <th className="pb-3 font-medium">Status</th>
-                      <th className="pb-3 font-medium">Compliance</th>
-                      <th className="pb-3 font-medium text-right">Group</th>
-                      <th className="pb-3 font-medium text-right">Revenue</th>
-                      <th className="pb-3 font-medium">Confidence</th>
-                      <th className="pb-3 font-medium">Monetization</th>
-                      <th className="pb-3 font-medium">Trend</th>
-                      <th className="pb-3 font-medium"></th>
+                    <tr className="border-b border-border bg-secondary/30 text-left text-xs uppercase tracking-wider text-muted-foreground">
+                      <th className="px-4 py-3 font-semibold">Opportunity</th>
+                      <th className="px-4 py-3 font-semibold">Type</th>
+                      <th className="px-4 py-3 font-semibold">Source</th>
+                      <th className="px-4 py-3 font-semibold">Status</th>
+                      <th className="px-4 py-3 font-semibold">Compliance</th>
+                      <th className="px-4 py-3 font-semibold text-right">Group</th>
+                      <th className="px-4 py-3 font-semibold text-right">Revenue</th>
+                      <th className="px-4 py-3 font-semibold">Confidence</th>
+                      <th className="px-4 py-3 font-semibold">Monetization</th>
+                      <th className="px-4 py-3 font-semibold">Trend</th>
+                      <th className="px-4 py-3 font-semibold"></th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-border">
+                  <tbody className="divide-y divide-border/50">
                     {recentOpportunities.map((opp) => (
                       <tr
                         key={opp.id}
-                        className="group text-sm hover:bg-secondary/50"
+                        className="group text-sm transition-colors duration-150 hover:bg-primary/5"
                       >
-                        <td className="py-4 pr-4">
+                        <td className="px-4 py-4">
                           <div>
                             <Link
                               href={`/opportunities/${opp.id}`}
-                              className="font-medium text-foreground hover:text-primary"
+                              className="font-medium text-foreground transition-colors hover:text-primary"
                             >
                               {opp.title}
                             </Link>
-                            <p className="mt-0.5 text-xs text-muted-foreground">
+                            <p className="mt-1 text-xs text-muted-foreground">
                               {opp.location} • {formatDate(opp.eventDate)}
                             </p>
                           </div>
                         </td>
-                        <td className="py-4 pr-4">
+                        <td className="px-4 py-4">
                           <TypeBadge type={opp.type} />
                         </td>
-                        <td className="py-4 pr-4">
+                        <td className="px-4 py-4">
                           <SourceBadge source={opp.source} />
                         </td>
-                        <td className="py-4 pr-4">
+                        <td className="px-4 py-4">
                           <StatusBadge status={opp.status} />
                         </td>
-                        <td className="py-4 pr-4">
+                        <td className="px-4 py-4">
                           <ComplianceBadge status={opp.complianceStatus} />
                         </td>
-                        <td className="py-4 pr-4 text-right font-medium text-foreground">
+                        <td className="px-4 py-4 text-right tabular-nums font-medium text-foreground">
                           {opp.groupSize.toLocaleString()}
                         </td>
-                        <td className="py-4 pr-4 text-right font-semibold text-foreground">
+                        <td className="px-4 py-4 text-right tabular-nums font-semibold text-foreground">
                           {formatCurrency(opp.estimatedRevenue)}
                         </td>
-                        <td className="py-4 pr-4">
+                        <td className="px-4 py-4">
                           <ScoreBar value={opp.confidence} />
                         </td>
-                        <td className="py-4 pr-4">
+                        <td className="px-4 py-4">
                           <ScoreBar value={opp.monetizationScore} />
                         </td>
-                        <td className="py-4 pr-4">
+                        <td className="px-4 py-4">
                           <TrendIndicator trend={opp.demandMetrics.growthTrend} />
                         </td>
-                        <td className="py-4">
+                        <td className="px-4 py-4">
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="opacity-0 group-hover:opacity-100"
+                            className="h-8 w-8 opacity-0 transition-opacity group-hover:opacity-100"
                             asChild
                           >
                             <Link href={`/opportunities/${opp.id}`}>
@@ -231,9 +247,9 @@ export default function DashboardPage() {
 
           {/* Quick Stats Grid */}
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <Card className="border-border bg-card">
-              <CardHeader>
-                <CardTitle className="text-sm font-medium text-muted-foreground">
+            <Card className="group border-border bg-card transition-all duration-200 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Top Sources This Week
                 </CardTitle>
               </CardHeader>
@@ -245,20 +261,20 @@ export default function DashboardPage() {
                 ].map((item) => (
                   <div
                     key={item.source}
-                    className="flex items-center justify-between"
+                    className="flex items-center justify-between rounded-lg p-2 transition-colors hover:bg-secondary/50"
                   >
                     <SourceBadge source={item.source} />
-                    <span className="text-sm font-medium text-foreground">
-                      {item.count} opportunities
+                    <span className="text-sm font-semibold tabular-nums text-foreground">
+                      {item.count}
                     </span>
                   </div>
                 ))}
               </CardContent>
             </Card>
 
-            <Card className="border-border bg-card">
-              <CardHeader>
-                <CardTitle className="text-sm font-medium text-muted-foreground">
+            <Card className="group border-border bg-card transition-all duration-200 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Popular Categories
                 </CardTitle>
               </CardHeader>
@@ -270,10 +286,10 @@ export default function DashboardPage() {
                 ].map((item) => (
                   <div
                     key={item.type}
-                    className="flex items-center justify-between"
+                    className="flex items-center justify-between rounded-lg p-2 transition-colors hover:bg-secondary/50"
                   >
                     <TypeBadge type={item.type} />
-                    <span className="text-sm font-medium text-foreground">
+                    <span className="text-sm font-semibold tabular-nums text-foreground">
                       {item.count}
                     </span>
                   </div>
@@ -281,9 +297,9 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
 
-            <Card className="border-border bg-card">
-              <CardHeader>
-                <CardTitle className="text-sm font-medium text-muted-foreground">
+            <Card className="group border-border bg-card transition-all duration-200 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Review Queue
                 </CardTitle>
               </CardHeader>
@@ -295,10 +311,10 @@ export default function DashboardPage() {
                 ].map((item) => (
                   <div
                     key={item.status}
-                    className="flex items-center justify-between"
+                    className="flex items-center justify-between rounded-lg p-2 transition-colors hover:bg-secondary/50"
                   >
                     <StatusBadge status={item.status} />
-                    <span className="text-sm font-medium text-foreground">
+                    <span className="text-sm font-semibold tabular-nums text-foreground">
                       {item.count}
                     </span>
                   </div>

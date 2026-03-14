@@ -38,20 +38,23 @@ export function OpportunitiesFilters({
   hasActiveFilters,
 }: OpportunitiesFiltersProps) {
   return (
-    <div className="flex flex-col gap-4 rounded-lg border border-border bg-card p-4 sm:flex-row sm:items-center">
+    <div className="flex flex-col gap-4 rounded-xl border border-border bg-card p-4 sm:flex-row sm:items-center">
       <div className="relative flex-1">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           type="search"
-          placeholder="Search opportunities..."
+          placeholder="Search opportunities by title, location, or tags..."
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="bg-input pl-9"
+          className="h-10 bg-secondary/50 pl-10 text-sm placeholder:text-muted-foreground/70 focus:bg-secondary focus:ring-2 focus:ring-primary/20"
         />
       </div>
 
-      <div className="flex flex-wrap items-center gap-2">
-        <Filter className="h-4 w-4 text-muted-foreground" />
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+          <Filter className="h-3.5 w-3.5" />
+          <span className="hidden sm:inline">Filters</span>
+        </div>
 
         <Select
           value={statusFilter}
@@ -59,7 +62,7 @@ export function OpportunitiesFilters({
             onStatusChange(value as OpportunityStatus | "all")
           }
         >
-          <SelectTrigger className="w-[140px] bg-input">
+          <SelectTrigger className="h-9 w-[130px] border-border bg-secondary/50 text-sm">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
@@ -78,7 +81,7 @@ export function OpportunitiesFilters({
             onTypeChange(value as OpportunityType | "all")
           }
         >
-          <SelectTrigger className="w-[140px] bg-input">
+          <SelectTrigger className="h-9 w-[130px] border-border bg-secondary/50 text-sm">
             <SelectValue placeholder="Type" />
           </SelectTrigger>
           <SelectContent>
@@ -98,7 +101,7 @@ export function OpportunitiesFilters({
             onSourceChange(value as SourceType | "all")
           }
         >
-          <SelectTrigger className="w-[140px] bg-input">
+          <SelectTrigger className="h-9 w-[130px] border-border bg-secondary/50 text-sm">
             <SelectValue placeholder="Source" />
           </SelectTrigger>
           <SelectContent>
@@ -115,13 +118,13 @@ export function OpportunitiesFilters({
 
         {hasActiveFilters && (
           <Button
-            variant="ghost"
+            variant="outline"
             size="sm"
             onClick={onClearFilters}
-            className="text-muted-foreground hover:text-foreground"
+            className="h-9 border-border bg-secondary/50 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
           >
-            <X className="mr-1 h-4 w-4" />
-            Clear
+            <X className="mr-1.5 h-3.5 w-3.5" />
+            Clear All
           </Button>
         )}
       </div>
