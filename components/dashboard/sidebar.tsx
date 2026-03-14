@@ -12,6 +12,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Zap,
+  PlusCircle,
 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -40,6 +41,12 @@ const navItems = [
     href: "/reviews",
     icon: ClipboardCheck,
     description: "Pending approvals",
+  },
+  {
+    label: "Submit",
+    href: "/submit",
+    icon: PlusCircle,
+    description: "Add opportunity",
   },
   {
     label: "Sources",
