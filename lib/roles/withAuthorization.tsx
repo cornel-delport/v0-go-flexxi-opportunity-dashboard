@@ -42,3 +42,5 @@ export function withAuthorization<P extends WithAuthorizationProps>(
 
   return WithAuthorization;
 }
+
+export default withAuthorization;

@@ -6,6 +6,7 @@ import { hasPermission, Role, Resource, Action } from './index';
 interface UserData {
   uid: string;
   role: Role;
+  email: string;
 }
 
 /**
@@ -17,7 +18,7 @@ interface UserData {
  * @returns A promise that resolves with the user's data if authorized,
  * or rejects with an error if unauthorized.
  */
-export async function authorize(resource: Resource, action: Action): Promise<UserData> {
+export async function authorize(resource: Resource | string, action: Action): Promise<UserData> {
   const sessionCookie = (await cookies()).get('session')?.value;
   if (!sessionCookie) {
     throw new Error('Unauthorized: No session cookie provided.');
@@ -26,6 +27,7 @@ export async function authorize(resource: Resource, action: Action): Promise<Use
   try {
     const decodedToken = await auth.verifySessionCookie(sessionCookie, true);
     const uid = decodedToken.uid;
+    const email = decodedToken.email || '';
 
     const userDoc = await db.collection('users').doc(uid).get();
 
@@ -36,11 +38,11 @@ export async function authorize(resource: Resource, action: Action): Promise<Use
     const userData = userDoc.data() as { role: Role };
     const userRole = userData.role;
 
-    if (!hasPermission(userRole, resource, action)) {
+    if (!hasPermission(userRole, resource as Resource, action)) {
       throw new Error(`Forbidden: Role '${userRole}' does not have permission for ${action} on ${resource}.`);
     }
 
-    return { uid, role: userRole };
+    return { uid, role: userRole, email };
   } catch (error) {
     console.error('Authorization error:', (error as Error).message);
     // Re-throw a generic error to avoid leaking implementation details

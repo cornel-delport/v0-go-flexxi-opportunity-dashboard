@@ -5,7 +5,6 @@ import { RESOURCES, ACTIONS, ROLES, Role } from '@/lib/roles';
 import { dbAdmin as db } from '@/lib/firebase/admin';
 import { logAuditEvent } from '@/lib/audit';
 import { auth } from '@/lib/firebase-admin';
-import { cookies } from 'next/headers';
 
 export async function PUT(request: NextRequest, context: { params: Promise<{ uid: string }> }) {
   const { uid } = await context.params;
@@ -18,7 +17,7 @@ export async function PUT(request: NextRequest, context: { params: Promise<{ uid
 
   try {
     // 2. Authorize the request
-    const { userId, userEmail } = await authorize(RESOURCES.ROLES, ACTIONS.ASSIGN);
+    const { uid: actorId } = await authorize(RESOURCES.USERS, ACTIONS.UPDATE);
 
     const userDocRef = db.collection('users').doc(uid);
     const userDoc = await userDocRef.get();
@@ -26,9 +25,9 @@ export async function PUT(request: NextRequest, context: { params: Promise<{ uid
 
     // 3. Prevent admins from editing super_admins
     if (userToEdit?.role === ROLES.SUPER_ADMIN) {
-        const adminUserDoc = await db.collection('users').doc(userId).get();
+        const adminUserDoc = await db.collection('users').doc(actorId).get();
         const adminUser = adminUserDoc.data();
-        if (adminUser?.role !== ROLES.SUPER_ADMIN) {
+        if (adminUser && adminUser.role !== ROLES.SUPER_ADMIN) {
             return new NextResponse('Admins cannot modify Super Admins', { status: 403 });
         }
     }
@@ -42,9 +41,10 @@ export async function PUT(request: NextRequest, context: { params: Promise<{ uid
     });
 
     // 5. Audit log
+    const actorEmail = (await auth.getUser(actorId)).email || '';
     await logAuditEvent({
-      actorUserId: userId,
-      actorEmail: userEmail,
+      actorUserId: actorId,
+      actorEmail: actorEmail,
       actionType: 'role.assignment',
       entityType: 'user',
       entityId: uid,
@@ -72,7 +72,7 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ u
 
   try {
     // 1. Authorize the request
-    const { userId, userEmail } = await authorize(RESOURCES.USERS, ACTIONS.EDIT);
+    const { uid: actorId } = await authorize(RESOURCES.USERS, ACTIONS.UPDATE);
 
     const userDocRef = db.collection('users').doc(uid);
     const userDoc = await userDocRef.get();
@@ -80,9 +80,9 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ u
 
     // 2. Prevent admins from editing super_admins
     if (userToEdit?.role === ROLES.SUPER_ADMIN) {
-        const adminUserDoc = await db.collection('users').doc(userId).get();
+        const adminUserDoc = await db.collection('users').doc(actorId).get();
         const adminUser = adminUserDoc.data();
-        if (adminUser?.role !== ROLES.SUPER_ADMIN) {
+        if (adminUser && adminUser.role !== ROLES.SUPER_ADMIN) {
             return new NextResponse('Admins cannot modify Super Admins', { status: 403 });
         }
     }
@@ -97,9 +97,10 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ u
     });
 
     // 5. Audit log
+    const actorEmail = (await auth.getUser(actorId)).email || '';
     await logAuditEvent({
-        actorUserId: userId,
-        actorEmail: userEmail,
+        actorUserId: actorId,
+        actorEmail: actorEmail,
         actionType: 'user.status_change',
         entityType: 'user',
         entityId: uid,

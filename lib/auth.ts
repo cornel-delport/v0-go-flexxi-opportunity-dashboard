@@ -5,6 +5,7 @@ import { auth } from '@/lib/firebase/client';
 import { db } from '@/lib/firebase/client';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { ROLES } from '@/lib/roles';
+import { FirestoreData } from './firestore-data-model';
 
 export async function signInWithGoogle() {
   const provider = new GoogleAuthProvider();
@@ -16,22 +17,21 @@ export async function signInWithGoogle() {
     const userSnap = await getDoc(userRef);
 
     if (!userSnap.exists()) {
-      await setDoc(userRef, {
-        uid: user.uid,
-        fullName: user.displayName,
+      const newUser: FirestoreData.User = {
+        id: user.uid,
+        displayName: user.displayName,
         email: user.email,
         photoURL: user.photoURL,
-        authProvider: 'google',
         role: ROLES.PENDING,
-        status: 'active',
         organizationId: null,
         teamId: null,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
         lastLoginAt: serverTimestamp(),
-      });
+      };
+      await setDoc(userRef, newUser);
     } else {
-      await setDoc(userRef, { lastLoginAt: serverTimestamp() }, { merge: true });
+      await setDoc(userRef, { lastLoginAt: serverTimestamp(), updatedAt: serverTimestamp() }, { merge: true });
     }
 
     return user;

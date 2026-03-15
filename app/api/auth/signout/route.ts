@@ -5,7 +5,7 @@ import { auth } from '@/lib/firebase-admin';
 import { logAuditEvent } from '@/lib/audit';
 
 export async function POST() {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const sessionCookie = cookieStore.get('session')?.value;
   if (sessionCookie) {
     try {

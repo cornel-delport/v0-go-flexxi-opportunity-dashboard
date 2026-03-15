@@ -1,6 +1,6 @@
 'use client';
 
-import { withAuthorization } from "@/lib/roles/withAuthorization";
+import withAuthorization from "@/lib/roles/withAuthorization";
 import { RESOURCES, ACTIONS } from "@/lib/roles";
 import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
 import { Topbar } from "@/components/dashboard/topbar";
