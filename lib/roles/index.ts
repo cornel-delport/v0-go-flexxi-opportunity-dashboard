@@ -44,11 +44,8 @@ export const ACTIONS = {
 export type Action = typeof ACTIONS[keyof typeof ACTIONS];
 
 // 4. PERMISSION MATRIX
-// Maps roles to their allowed actions for each resource.
-// Format: Record<Role, Partial<Record<Resource, Action[]>>>
 const PERMISSIONS: Record<Role, Partial<Record<Resource, readonly Action[]>>> = {
   [ROLES.SUPER_ADMIN]: {
-    // Super Admin has all permissions on all resources
     [RESOURCES.DASHBOARD]: [ACTIONS.READ, ACTIONS.EXPORT],
     [RESOURCES.OPPORTUNITIES]: [ACTIONS.CREATE, ACTIONS.READ, ACTIONS.UPDATE, ACTIONS.DELETE, ACTIONS.EXPORT],
     [RESOURCES.REVIEWS]: [ACTIONS.CREATE, ACTIONS.READ, ACTIONS.UPDATE, ACTIONS.DELETE, ACTIONS.APPROVE, ACTIONS.REJECT],
@@ -61,7 +58,6 @@ const PERMISSIONS: Record<Role, Partial<Record<Resource, readonly Action[]>>> = 
     [RESOURCES.INTEGRATIONS]: [ACTIONS.CREATE, ACTIONS.READ, ACTIONS.UPDATE, ACTIONS.DELETE],
   },
   [ROLES.ADMIN]: {
-    // Admin has similar permissions but cannot manage super_admins or critical settings
     [RESOURCES.DASHBOARD]: [ACTIONS.READ, ACTIONS.EXPORT],
     [RESOURCES.OPPORTUNITIES]: [ACTIONS.CREATE, ACTIONS.READ, ACTIONS.UPDATE, ACTIONS.DELETE, ACTIONS.EXPORT],
     [RESOURCES.REVIEWS]: [ACTIONS.CREATE, ACTIONS.READ, ACTIONS.UPDATE, ACTIONS.DELETE, ACTIONS.APPROVE, ACTIONS.REJECT],
@@ -97,55 +93,29 @@ const PERMISSIONS: Record<Role, Partial<Record<Resource, readonly Action[]>>> = 
     [RESOURCES.DASHBOARD]: [ACTIONS.READ],
     [RESOURCES.OPPORTUNITIES]: [ACTIONS.READ],
   },
-  [ROLES.PENDING]: {
-    // Pending users have no permissions
-  },
+  [ROLES.PENDING]: {},
 };
-
 
 // 5. REUSABLE AUTHORIZATION HELPERS
 
-/**
- * Checks if a role has a specific permission for a resource.
- *
- * @param role The user's role.
- * @param resource The resource being accessed.
- * @param action The action being performed.
- * @returns True if the user has the permission, false otherwise.
- */
 export function hasPermission(role: Role, resource: Resource, action: Action): boolean {
-  if (!role) {
-    return false;
-  }
-  
+  if (!role) return false;
   const rolePermissions = PERMISSIONS[role];
-  if (!rolePermissions) {
-    return false; // Role not found in the matrix
-  }
-
+  if (!rolePermissions) return false;
   const resourcePermissions = rolePermissions[resource];
-  if (!resourcePermissions) {
-    return false; // Resource not defined for this role
-  }
-
+  if (!resourcePermissions) return false;
   return resourcePermissions.includes(action);
 }
 
-/**
- * Future-proof structure for more granular permissions.
- * This can be extended to check organization or team-specific overrides.
- */
-// interface AuthorizationContext {
-//   userRole: Role;
-//   organizationId?: string;
-//   teamId?: string;
-//   customRoles?: any; // Define custom role structure
-// }
-//
-// export function can(context: AuthorizationContext, resource: Resource, action: Action): boolean {
-//   // 1. Check for temporary elevated access (not implemented yet)
-//   // 2. Check for custom role overrides
-//   // 3. Check for organization/team specific roles
-//   // 4. Fallback to the base role permission
-//   return hasPermission(context.userRole, resource, action);
-// }
+export interface AuthorizationContext {
+  userRole: Role;
+  organizationId?: string;
+  teamId?: string;
+  customRoles?: any;
+}
+
+export function can(context: AuthorizationContext, resource: Resource, action: Action): boolean {
+  // Future logic for custom roles can be added here.
+  // For now, it defaults to the base role permissions.
+  return hasPermission(context.userRole, resource, action);
+}

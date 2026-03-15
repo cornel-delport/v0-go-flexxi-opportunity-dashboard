@@ -1,9 +1,11 @@
-export const runtime = 'nodejs';
-// app/api/admin/users/[uid]/route.ts
+
 import { NextResponse, NextRequest } from 'next/server';
 import { authorize } from '@/lib/roles/utils';
 import { RESOURCES, ACTIONS, ROLES, Role } from '@/lib/roles';
 import { dbAdmin as db } from '@/lib/firebase/admin';
+import { logAuditEvent } from '@/lib/audit';
+import { auth } from '@/lib/firebase-admin';
+import { cookies } from 'next/headers';
 
 export async function PUT(request: NextRequest, context: { params: Promise<{ uid: string }> }) {
   const { uid } = await context.params;
@@ -16,28 +18,101 @@ export async function PUT(request: NextRequest, context: { params: Promise<{ uid
 
   try {
     // 2. Authorize the request
-    const { role: adminRole } = await authorize(RESOURCES.ROLES, ACTIONS.ASSIGN);
+    const { userId, userEmail } = await authorize(RESOURCES.ROLES, ACTIONS.ASSIGN);
+
+    const userDocRef = db.collection('users').doc(uid);
+    const userDoc = await userDocRef.get();
+    const userToEdit = userDoc.data();
 
     // 3. Prevent admins from editing super_admins
-    if (adminRole === ROLES.ADMIN) {
-      const userDoc = await db.collection('users').doc(uid).get();
-      const userToEdit = userDoc.data();
-      if (userToEdit?.role === ROLES.SUPER_ADMIN) {
-        return new NextResponse('Admins cannot modify Super Admins', { status: 403 });
-      }
+    if (userToEdit?.role === ROLES.SUPER_ADMIN) {
+        const adminUserDoc = await db.collection('users').doc(userId).get();
+        const adminUser = adminUserDoc.data();
+        if (adminUser?.role !== ROLES.SUPER_ADMIN) {
+            return new NextResponse('Admins cannot modify Super Admins', { status: 403 });
+        }
     }
 
+    const oldRole = userToEdit?.role;
+
     // 4. Update the user's role in Firestore
-    await db.collection('users').doc(uid).update({
+    await userDocRef.update({
       role: role,
       updatedAt: new Date().toISOString(),
     });
 
-    // 5. Return a success response
+    // 5. Audit log
+    await logAuditEvent({
+      actorUserId: userId,
+      actorEmail: userEmail,
+      actionType: 'role.assignment',
+      entityType: 'user',
+      entityId: uid,
+      oldValueSummary: `Role: ${oldRole}`,
+      newValueSummary: `Role: ${role}`,
+      source: 'web-app',
+      ipPlaceholder: '127.0.0.1', // Replace with actual IP if available
+    });
+
+    // 6. Return a success response
     return NextResponse.json({ message: 'User role updated successfully.' });
   } catch (error) {
     console.error(`Failed to update role for user ${uid}:`, (error as Error).message);
     // Correctly handle authorization errors vs. other server errors
+    if ((error as Error).message.includes('Unauthorized') || (error as Error).message.includes('Forbidden')) {
+      return new NextResponse((error as Error).message, { status: 403 });
+    }
+    return new NextResponse('Internal Server Error', { status: 500 });
+  }
+}
+
+export async function PATCH(request: NextRequest, context: { params: Promise<{ uid: string }> }) {
+  const { uid } = await context.params;
+  const { disabled } = (await request.json()) as { disabled: boolean };
+
+  try {
+    // 1. Authorize the request
+    const { userId, userEmail } = await authorize(RESOURCES.USERS, ACTIONS.EDIT);
+
+    const userDocRef = db.collection('users').doc(uid);
+    const userDoc = await userDocRef.get();
+    const userToEdit = userDoc.data();
+
+    // 2. Prevent admins from editing super_admins
+    if (userToEdit?.role === ROLES.SUPER_ADMIN) {
+        const adminUserDoc = await db.collection('users').doc(userId).get();
+        const adminUser = adminUserDoc.data();
+        if (adminUser?.role !== ROLES.SUPER_ADMIN) {
+            return new NextResponse('Admins cannot modify Super Admins', { status: 403 });
+        }
+    }
+
+    // 3. Update the user's status in Firebase Authentication
+    await auth.updateUser(uid, { disabled });
+
+    // 4. Update the user's status in Firestore
+    await userDocRef.update({
+      disabled: disabled,
+      updatedAt: new Date().toISOString(),
+    });
+
+    // 5. Audit log
+    await logAuditEvent({
+        actorUserId: userId,
+        actorEmail: userEmail,
+        actionType: 'user.status_change',
+        entityType: 'user',
+        entityId: uid,
+        oldValueSummary: `Disabled: ${userToEdit?.disabled}`,
+        newValueSummary: `Disabled: ${disabled}`,
+        source: 'web-app',
+        ipPlaceholder: '127.0.0.1', // Replace with actual IP if available
+      });
+
+    // 6. Return a success response
+    return NextResponse.json({ message: `User ${disabled ? 'disabled' : 'enabled'} successfully.` });
+  } catch (error) {
+    console.error(`Failed to update status for user ${uid}:`, (error as Error).message);
     if ((error as Error).message.includes('Unauthorized') || (error as Error).message.includes('Forbidden')) {
       return new NextResponse((error as Error).message, { status: 403 });
     }

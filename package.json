@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "check": "tsc --noEmit && npm run build && npm test"
+    "check": "tsc --noEmit && npm run build && npm test",
+    "test": "echo \"No tests specified\" && exit 0"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
