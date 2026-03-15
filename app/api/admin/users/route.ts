@@ -3,7 +3,7 @@ export const runtime = 'nodejs';
 import { NextResponse } from 'next/server';
 import { authorize } from '@/lib/roles/utils';
 import { RESOURCES, ACTIONS } from '@/lib/roles';
-import { db } from '@/lib/firebase/server';
+import { dbAdmin as db } from '@/lib/firebase/admin';
 
 export async function GET() {
   try {

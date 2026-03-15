@@ -1,7 +1,6 @@
 // lib/roles/utils.ts
 import { cookies } from 'next/headers';
-import { auth } from '@/lib/firebase/server';
-import { db } from '@/lib/firebase/server';
+import { authAdmin as auth, dbAdmin as db } from '@/lib/firebase/admin';
 import { hasPermission, Role, Resource, Action } from './index';
 
 interface UserData {

@@ -3,7 +3,7 @@ export const runtime = 'nodejs';
 import { NextResponse, NextRequest } from 'next/server';
 import { authorize } from '@/lib/roles/utils';
 import { RESOURCES, ACTIONS, ROLES, Role } from '@/lib/roles';
-import { db } from '@/lib/firebase/server';
+import { dbAdmin as db } from '@/lib/firebase/admin';
 
 export async function PUT(request: NextRequest, context: { params: Promise<{ uid: string }> }) {
   const { uid } = await context.params;

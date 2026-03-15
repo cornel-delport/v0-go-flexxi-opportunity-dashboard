@@ -1,3 +1,4 @@
+export const runtime = 'nodejs';
 import { NextResponse } from 'next/server';
 import { userService } from '@/lib/users/userService';
 import { UserSchema } from '@/lib/users/user';
