@@ -56,4 +56,7 @@ export const mockDashboardStats = {
   opportunities: 12,
   reviews: 3,
   sources: 2,
+  approvedThisMonth: 4,
+  estimatedRevenue: 125000,
+  avgConfidence: 85,
 };
