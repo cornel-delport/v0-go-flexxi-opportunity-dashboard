@@ -1,25 +1,24 @@
 
 import { NextResponse, NextRequest } from 'next/server';
 import { authorize } from '@/lib/roles/utils';
-import { RESOURCES, ACTIONS, ROLES } from '@/lib/roles';
+import { RESOURCES, ACTIONS, ROLES } from '@/lib/roles/constants';
 import { dbAdmin as db } from '@/lib/firebase/admin';
 import { logAuditEvent } from '@/lib/audit';
-import { auth } from '@/lib/firebase-admin';
 
 // Create a new review
-export async function POST(request: NextRequest, context: { params: Promise<{ id: string }> }) {
-    const { id: opportunityId } = await context.params;
+export async function POST(request: NextRequest, context: { params: { id: string } }) {
+    const { id: opportunityId } = context.params;
     const { notes } = await request.json();
 
     try {
-        const { uid: userId, email: userEmail } = await authorize(RESOURCES.REVIEWS, ACTIONS.CREATE);
+        const actor = await authorize(request, RESOURCES.REVIEWS, ACTIONS.CREATE);
 
         const reviewRef = db.collection('reviews').doc();
         const review = {
             id: reviewRef.id,
             opportunityId,
-            reviewerId: userId,
-            reviewerEmail: userEmail,
+            reviewerId: actor.id,
+            reviewerEmail: actor.email,
             status: 'pending',
             notes,
             createdAt: new Date().toISOString(),
@@ -39,8 +38,8 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
 }
 
 // Approve or reject a review
-export async function PUT(request: NextRequest, context: { params: Promise<{ id: string }> }) {
-    const { id } = await context.params;
+export async function PUT(request: NextRequest, context: { params: { id: string } }) {
+    const { id } = context.params;
     const { status } = (await request.json()) as { status: 'approved' | 'rejected' };
 
     if (!['approved', 'rejected'].includes(status)) {
@@ -48,7 +47,7 @@ export async function PUT(request: NextRequest, context: { params: Promise<{ id:
     }
 
     try {
-        const { uid: userId, email: userEmail } = await authorize(RESOURCES.REVIEWS, ACTIONS.UPDATE);
+        const actor = await authorize(request, RESOURCES.REVIEWS, ACTIONS.UPDATE);
 
         const reviewRef = db.collection('reviews').doc(id);
         const reviewDoc = await reviewRef.get();
@@ -66,15 +65,14 @@ export async function PUT(request: NextRequest, context: { params: Promise<{ id:
         });
 
         await logAuditEvent({
-            actorUserId: userId,
-            actorEmail: userEmail,
+            actorUserId: actor.id,
+            actorEmail: actor.email || '',
             actionType: status === 'approved' ? 'review.approval' : 'review.rejection',
             entityType: 'review',
             entityId: id,
             oldValueSummary: `Status: ${oldStatus}`,
             newValueSummary: `Status: ${status}`,
             source: 'web-app',
-            ipPlaceholder: '127.0.0.1',
         });
 
         return NextResponse.json({ message: `Review ${status} successfully.` });

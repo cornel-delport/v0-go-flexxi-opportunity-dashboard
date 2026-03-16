@@ -1,7 +1,7 @@
 import { auth } from '@/lib/firebase/client';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { userService } from '@/lib/users';
-import { UserRegistration, UserProfile } from '@/lib/users';
+import { userService } from '@/lib/services/user.service';
+import { UserRegistration, UserProfile } from '@/lib/types';
 
 export const authService = {
   async register(user: UserRegistration): Promise<UserProfile> {

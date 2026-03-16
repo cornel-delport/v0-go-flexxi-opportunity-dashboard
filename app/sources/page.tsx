@@ -16,6 +16,7 @@ import {
   Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { SourceType } from "@/lib/types";
 
 function formatDateTime(dateString: string): string {
   return new Date(dateString).toLocaleString("en-US", {
@@ -39,7 +40,14 @@ function getRelativeTime(dateString: string): string {
   return `${diffDays}d ago`;
 }
 
-const statusConfig = {
+const statusConfig: Record<
+  string,
+  {
+    label: string;
+    icon: React.ElementType;
+    className: string;
+  }
+> = {
   active: {
     label: "Active",
     icon: CheckCircle,
@@ -103,7 +111,7 @@ export default function SourcesPage() {
                   <CardHeader className="pb-3">
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-3">
-                        <SourceBadge source={source.type} />
+                        <SourceBadge source={source.type as SourceType} />
                         <div>
                           <CardTitle className="text-base font-semibold text-foreground">
                             {source.name}

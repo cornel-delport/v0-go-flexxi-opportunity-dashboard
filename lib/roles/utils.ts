@@ -1,51 +1,69 @@
-// lib/roles/utils.ts
+import { NextRequest } from 'next/server';
 import { cookies } from 'next/headers';
-import { authAdmin as auth, dbAdmin as db } from '@/lib/firebase/admin';
-import { hasPermission, Role, Resource, Action } from './index';
+import { auth } from '@/lib/firebase-admin';
+import { dbAdmin } from '@/lib/firebase/admin';
+import { ROLES, Role, Resource, Action, RESOURCES, ACTIONS } from './constants';
+import { FirestoreData } from '@/lib/firestore-data-model';
+import UserProfile = FirestoreData.UserProfile;
 
-interface UserData {
-  uid: string;
-  role: Role;
-  email: string;
-}
+const permissions: { [key in Role]?: { [key in Resource]?: Action[] } } = {
+    [ROLES.MEMBER]: {
+        [RESOURCES.OPPORTUNITIES]: [ACTIONS.READ],
+        [RESOURCES.REVIEWS]: [ACTIONS.CREATE, ACTIONS.READ],
+      },
+      [ROLES.ADMIN]: {
+        [RESOURCES.USERS]: [ACTIONS.READ, ACTIONS.UPDATE],
+        [RESOURCES.OPPORTUNITIES]: [ACTIONS.CREATE, ACTIONS.READ, ACTIONS.UPDATE],
+        [RESOURCES.REVIEWS]: [ACTIONS.CREATE, ACTIONS.READ, ACTIONS.UPDATE],
+        [RESOURCES.SETTINGS]: [ACTIONS.READ, ACTIONS.UPDATE],
+      },
+      [ROLES.SUPER_ADMIN]: {
+        [RESOURCES.USERS]: [ACTIONS.CREATE, ACTIONS.READ, ACTIONS.UPDATE, ACTIONS.DELETE],
+        [RESOURCES.OPPORTUNITIES]: [ACTIONS.CREATE, ACTIONS.READ, ACTIONS.UPDATE, ACTIONS.DELETE],
+        [RESOURCES.REVIEWS]: [ACTIONS.CREATE, ACTIONS.READ, ACTIONS.UPDATE, ACTIONS.DELETE],
+        [RESOURCES.SETTINGS]: [ACTIONS.CREATE, ACTIONS.READ, ACTIONS.UPDATE, ACTIONS.DELETE],
+      },
+};
 
-/**
- * Server-side authorization check.
- * Verifies the user's session, fetches their role, and checks permissions.
- *
- * @param resource The resource being accessed.
- * @param action The action being performed.
- * @returns A promise that resolves with the user's data if authorized,
- * or rejects with an error if unauthorized.
- */
-export async function authorize(resource: Resource | string, action: Action): Promise<UserData> {
-  const sessionCookie = (await cookies()).get('session')?.value;
-  if (!sessionCookie) {
-    throw new Error('Unauthorized: No session cookie provided.');
-  }
+export const hasPermission = (userRole: Role, resource: Resource, action: Action): boolean => {
+    if (!userRole) return false;
 
-  try {
-    const decodedToken = await auth.verifySessionCookie(sessionCookie, true);
-    const uid = decodedToken.uid;
-    const email = decodedToken.email || '';
+    // Super admins have all permissions
+    if (userRole === ROLES.SUPER_ADMIN) return true;
 
-    const userDoc = await db.collection('users').doc(uid).get();
+    const userPermissions = permissions[userRole];
+    if (!userPermissions) return false;
+
+    const resourcePermissions = userPermissions[resource];
+    if (!resourcePermissions) return false;
+
+    return resourcePermissions.includes(action);
+};
+
+export const authorize = async (request: NextRequest, resource: Resource, action: Action): Promise<UserProfile> => {
+    const session = cookies().get('session')?.value || '';
+
+    // 1. Check for session cookie
+    if (!session) {
+      throw new Error('Unauthorized: No session cookie found');
+    }
+
+    // 2. Verify session cookie and get user
+    const decodedToken = await auth.verifySessionCookie(session, true);
+    const userRef = dbAdmin.collection('users').doc(decodedToken.uid);
+    const userDoc = await userRef.get();
 
     if (!userDoc.exists) {
-      throw new Error('Unauthorized: User profile not found.');
+      throw new Error('Unauthorized: User not found');
     }
 
-    const userData = userDoc.data() as { role: Role };
-    const userRole = userData.role;
+    const user = userDoc.data() as UserProfile;
 
-    if (!hasPermission(userRole, resource as Resource, action)) {
-      throw new Error(`Forbidden: Role '${userRole}' does not have permission for ${action} on ${resource}.`);
+    // 3. Check for permissions
+    if (!hasPermission(user.role, resource, action)) {
+      throw new Error('Forbidden: Insufficient permissions');
     }
 
-    return { uid, role: userRole, email };
-  } catch (error) {
-    console.error('Authorization error:', (error as Error).message);
-    // Re-throw a generic error to avoid leaking implementation details
-    throw new Error('An error occurred during authorization.');
-  }
-}
+    // 4. Return the authenticated and authorized user
+    return user;
+  };

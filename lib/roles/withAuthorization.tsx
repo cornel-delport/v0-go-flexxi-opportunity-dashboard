@@ -1,7 +1,8 @@
 // lib/roles/withAuthorization.tsx
 
 import { useSession } from "@/lib/useSession";
-import { hasPermission, Resource, Action, Role } from "./index";
+import { hasPermission } from "./utils";
+import { Resource, Action, Role } from "./constants";
 import { useRouter } from "next/navigation";
 import { ComponentType } from 'react';
 import { User } from "@/lib/types";
@@ -16,7 +17,7 @@ export function withAuthorization<P extends WithAuthorizationProps>(
   action: Action
 ) {
   const WithAuthorization = (props: P) => {
-    const user = useSession();
+    const { user } = useSession();
     const router = useRouter();
 
     if (!user) {
@@ -25,7 +26,7 @@ export function withAuthorization<P extends WithAuthorizationProps>(
       return null; // or a loading component
     }
 
-    if (!hasPermission(user.role as Role, resource, action)) {
+    if (!hasPermission(user.role, resource, action)) {
       // User does not have the required permission
       // Redirect them to a "forbidden" page or another appropriate page
       router.push("/forbidden");

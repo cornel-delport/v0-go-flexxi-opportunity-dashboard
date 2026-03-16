@@ -1,3 +1,4 @@
+
 export namespace FirestoreData {
     export interface User {
         id: string;
@@ -11,7 +12,6 @@ export namespace FirestoreData {
         updatedAt: any;
         lastLoginAt: any;
         disabled?: boolean;
-        password?: string;
     }
 
     export interface UserProfile extends User {
@@ -36,6 +36,7 @@ export namespace FirestoreData {
         confidence: number;
         assignedTo: string;
         tags: string[];
+        summary: string;
     }
 
     export interface Review {
@@ -63,7 +64,7 @@ export namespace FirestoreData {
         url: string;
     }
 
-    export interface Audit {
+    export interface AuditLog {
         id: string;
         actorUserId: string;
         actorEmail: string;
@@ -77,15 +78,14 @@ export namespace FirestoreData {
         ipAddress: string;
     }
 
-    export interface AuditLog extends Audit {
-        // Inherits from Audit
-    }
+    export interface Audit extends AuditLog {}
 
     export interface Session {
         id: string;
         userId: string;
-        expiresAt: any;
         sessionToken: string;
+        expiresAt: any;
+        createdAt: any;
     }
 
     export interface Integration {

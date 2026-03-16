@@ -1,6 +1,6 @@
 import { FirestoreData } from "./firestore-data-model";
 
-export const mockOpportunities: FirestoreData.Opportunity[] = [
+export const mockOpportunities: (FirestoreData.Opportunity & { summary: string})[] = [
   {
     id: "opp-001",
     title: "Manchester United Away Trip - Champions League",
@@ -19,6 +19,7 @@ export const mockOpportunities: FirestoreData.Opportunity[] = [
     confidence: 0.92,
     assignedTo: "user-001",
     tags: ["football", "champions-league", "barcelona"],
+    summary: "A large group of Manchester United supporters are looking for travel options to Barcelona for an upcoming Champions League match. They are a highly engaged group and represent a significant revenue opportunity."
   },
 ];
 
@@ -50,3 +51,9 @@ export const mockSources: FirestoreData.SourceConfig[] = [
     url: "https://reddit.com/r/sportstravel",
   },
 ];
+
+export const mockDashboardStats = {
+  opportunities: 12,
+  reviews: 3,
+  sources: 2,
+};

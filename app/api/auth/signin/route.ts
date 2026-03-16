@@ -2,7 +2,8 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/lib/firebase-admin';
 import { logAuditEvent } from '@/lib/audit';
-import { UserProfile } from '@/lib/firestore-data-model';
+import { FirestoreData } from '@/lib/firestore-data-model';
+import UserProfile = FirestoreData.UserProfile;
 
 export async function POST(req: Request) {
   try {
@@ -23,7 +24,6 @@ export async function POST(req: Request) {
       entityType: 'user',
       entityId: decodedToken.uid,
       source: 'web-app',
-      ipPlaceholder: '127.0.0.1', // Replace with actual IP if available
     });
 
     return response;

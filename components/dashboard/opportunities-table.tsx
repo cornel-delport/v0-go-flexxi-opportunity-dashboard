@@ -13,7 +13,13 @@ import {
 import { StatusBadge, ComplianceBadge } from "./status-badge";
 import { SourceBadge } from "./source-badge";
 import { TypeBadge } from "./type-badge";
-import type { Opportunity } from "@/lib/types";
+import type {
+  Opportunity,
+  OpportunityStatus,
+  ComplianceStatus,
+  SourceType,
+  OpportunityType,
+} from "@/lib/types";
 
 interface OpportunitiesTableProps {
   opportunities: Opportunity[];
@@ -85,16 +91,16 @@ export function OpportunitiesTable({ opportunities }: OpportunitiesTableProps) {
                 </div>
               </td>
               <td className="p-4">
-                <TypeBadge type={opp.type} />
+                <TypeBadge type={opp.type as OpportunityType} />
               </td>
               <td className="p-4">
-                <SourceBadge source={opp.source} />
+                <SourceBadge source={opp.source as SourceType} />
               </td>
               <td className="p-4">
-                <StatusBadge status={opp.status} />
+                <StatusBadge status={opp.status as OpportunityStatus} />
               </td>
               <td className="p-4">
-                <ComplianceBadge status={opp.complianceStatus} />
+                <ComplianceBadge status={opp.complianceStatus as ComplianceStatus} />
               </td>
               <td className="p-4 text-foreground">
                 {opp.groupSize.toLocaleString()}

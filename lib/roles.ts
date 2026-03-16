@@ -1,6 +1,7 @@
 export const ROLES = {
   PENDING: 'pending',
   USER: 'user',
+  ANALYST: 'analyst',
   ADMIN: 'admin',
   SUPER_ADMIN: 'super_admin',
 };

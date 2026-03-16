@@ -21,6 +21,12 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import {
+  OpportunityStatus,
+  ComplianceStatus,
+  SourceType,
+  OpportunityType,
+} from "@/lib/types";
 
 function formatCurrency(value: number): string {
   return new Intl.NumberFormat("en-US", {
@@ -56,21 +62,21 @@ export default function DashboardPage() {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
             <KpiCard
               title="Total Opportunities"
-              value={stats.totalOpportunities.toLocaleString()}
+              value={stats.opportunities.toLocaleString()}
               change="+12% from last month"
               changeType="positive"
               icon={Compass}
             />
             <KpiCard
               title="New This Week"
-              value={stats.newThisWeek}
+              value={stats.reviews}
               change="+8 from yesterday"
               changeType="positive"
               icon={TrendingUp}
             />
             <KpiCard
               title="Pending Review"
-              value={stats.pendingReview}
+              value={stats.sources}
               change="5 high priority"
               changeType="neutral"
               icon={Clock}
@@ -147,16 +153,16 @@ export default function DashboardPage() {
                           </div>
                         </td>
                         <td className="py-4 pr-4">
-                          <TypeBadge type={opp.type} />
+                          <TypeBadge type={opp.type as OpportunityType} />
                         </td>
                         <td className="py-4 pr-4">
-                          <SourceBadge source={opp.source} />
+                          <SourceBadge source={opp.source as SourceType} />
                         </td>
                         <td className="py-4 pr-4">
-                          <StatusBadge status={opp.status} />
+                          <StatusBadge status={opp.status as OpportunityStatus} />
                         </td>
                         <td className="py-4 pr-4">
-                          <ComplianceBadge status={opp.complianceStatus} />
+                          <ComplianceBadge status={opp.complianceStatus as ComplianceStatus} />
                         </td>
                         <td className="py-4 pr-4 text-foreground">
                           {opp.groupSize.toLocaleString()}
@@ -166,13 +172,13 @@ export default function DashboardPage() {
                         </td>
                         <td className="py-4 pr-4">
                           <span
-                            className={
-                              opp.confidence >= 90
+                            className={`
+                              ${opp.confidence >= 90
                                 ? "text-success"
                                 : opp.confidence >= 75
                                 ? "text-warning"
-                                : "text-muted-foreground"
-                            }
+                                : "text-muted-foreground"}
+                            `}
                           >
                             {opp.confidence}%
                           </span>

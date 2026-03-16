@@ -21,10 +21,9 @@ class UserService {
     await deleteDoc(userRef);
   }
 
-  async createUser(userData: Omit<FirestoreData.User, 'id'>): Promise<FirestoreData.User | null> {
-    const userRef = doc(collection(db, 'users'));
-    const newUser = { ...userData, id: userRef.id };
-    await setDoc(userRef, newUser);
+  async createUser(userData: FirestoreData.User): Promise<FirestoreData.User | null> {
+    const userRef = doc(db, 'users', userData.id);
+    await setDoc(userRef, userData);
     const createdUserSnap = await getDoc(userRef);
     return createdUserSnap.exists() ? (createdUserSnap.data() as FirestoreData.User) : null;
   }

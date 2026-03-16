@@ -6,7 +6,7 @@ import { Topbar } from "@/components/dashboard/topbar";
 import { OpportunitiesFilters } from "@/components/dashboard/opportunities-filters";
 import { OpportunitiesTable } from "@/components/dashboard/opportunities-table";
 import { mockOpportunities } from "@/lib/mock-data";
-import type { OpportunityType, OpportunityStatus, SourceType } from "@/lib/types";
+import type { OpportunityType, OpportunityStatus, SourceType, Opportunity } from "@/lib/types";
 
 export default function OpportunitiesPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -14,7 +14,7 @@ export default function OpportunitiesPage() {
   const [typeFilter, setTypeFilter] = useState<OpportunityType | "all">("all");
   const [sourceFilter, setSourceFilter] = useState<SourceType | "all">("all");
 
-  const filteredOpportunities = useMemo(() => {
+  const filteredOpportunities: Opportunity[] = useMemo(() => {
     return mockOpportunities.filter((opp) => {
       const matchesSearch =
         searchQuery === "" ||

@@ -1,30 +1,32 @@
-import { User as FirebaseUser } from 'firebase/auth';
-import { FirestoreData } from './firestore-data-model';
+import { Role } from "@/lib/roles";
 
-export type User = FirebaseUser & {
-  role: string;
-};
+export type OpportunityStatus = "new" | "under-review" | "approved" | "rejected" | "archived";
+export type ComplianceStatus = "verified" | "pending" | "flagged" | "unknown";
+export type SourceType = "internal" | "external" | "referral";
+export type OpportunityType = "consulting" | "full-time" | "part-time" | "contract";
 
-export enum OpportunityStatus {
-    ACTIVE = 'active',
-    INACTIVE = 'inactive',
-    ARCHIVED = 'archived',
+export interface Opportunity {
+  id: string;
+  title: string;
+  location: string;
+  eventDate: string;
+  type: OpportunityType;
+  source: SourceType;
+  status: OpportunityStatus;
+  complianceStatus: ComplianceStatus;
+  groupSize: number;
+  estimatedRevenue: number;
+  confidence: number;
+  createdAt: string;
 }
 
-export enum SourceType {
-    EMAIL = 'email',
-    WEBSITE = 'website',
-    MANUAL = 'manual',
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  avatar: string;
+  role: Role;
+  status: "active" | "inactive" | "pending";
+  lastLogin: string;
+  createdAt: string;
 }
-
-export enum ComplianceStatus {
-    COMPLIANT = 'compliant',
-    NON_COMPLIANT = 'non-compliant',
-    PENDING = 'pending',
-}
-
-export type Opportunity = string;
-
-export type OpportunityType = FirestoreData.Opportunity;
-export type Review = FirestoreData.Review;
-export type Source = FirestoreData.SourceConfig;

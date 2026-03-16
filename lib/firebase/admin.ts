@@ -1,21 +1,4 @@
-import * as admin from 'firebase-admin';
+import { auth, db } from '@/lib/firebase-admin';
 
-if (!process.env.FIREBASE_PRIVATE_KEY) {
-  throw new Error('Missing FIREBASE_PRIVATE_KEY environment variable');
-}
-
-if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert({
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-    }),
-    databaseURL: `https://${process.env.FIREBASE_PROJECT_ID}.firebaseio.com`,
-  });
-}
-
-const authAdmin = admin.auth();
-const dbAdmin = admin.firestore();
-
-export { authAdmin, dbAdmin };
+export const authAdmin = auth;
+export const dbAdmin = db;

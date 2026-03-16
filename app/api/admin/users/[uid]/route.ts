@@ -1,13 +1,13 @@
 
 import { NextResponse, NextRequest } from 'next/server';
 import { authorize } from '@/lib/roles/utils';
-import { RESOURCES, ACTIONS, ROLES, Role } from '@/lib/roles';
+import { RESOURCES, ACTIONS, ROLES, Role } from '@/lib/roles/constants';
 import { dbAdmin as db } from '@/lib/firebase/admin';
 import { logAuditEvent } from '@/lib/audit';
 import { auth } from '@/lib/firebase-admin';
 
-export async function PUT(request: NextRequest, context: { params: Promise<{ uid: string }> }) {
-  const { uid } = await context.params;
+export async function PUT(request: NextRequest, context: { params: { uid: string } }) {
+  const { uid } = context.params;
   const { role } = (await request.json()) as { role: Role };
 
   // 1. Validate the incoming role
@@ -17,7 +17,7 @@ export async function PUT(request: NextRequest, context: { params: Promise<{ uid
 
   try {
     // 2. Authorize the request
-    const { uid: actorId } = await authorize(RESOURCES.USERS, ACTIONS.UPDATE);
+    const actor = await authorize(request, RESOURCES.USERS, ACTIONS.UPDATE);
 
     const userDocRef = db.collection('users').doc(uid);
     const userDoc = await userDocRef.get();
@@ -25,9 +25,7 @@ export async function PUT(request: NextRequest, context: { params: Promise<{ uid
 
     // 3. Prevent admins from editing super_admins
     if (userToEdit?.role === ROLES.SUPER_ADMIN) {
-        const adminUserDoc = await db.collection('users').doc(actorId).get();
-        const adminUser = adminUserDoc.data();
-        if (adminUser && adminUser.role !== ROLES.SUPER_ADMIN) {
+        if (actor.role !== ROLES.SUPER_ADMIN) {
             return new NextResponse('Admins cannot modify Super Admins', { status: 403 });
         }
     }
@@ -41,17 +39,15 @@ export async function PUT(request: NextRequest, context: { params: Promise<{ uid
     });
 
     // 5. Audit log
-    const actorEmail = (await auth.getUser(actorId)).email || '';
     await logAuditEvent({
-      actorUserId: actorId,
-      actorEmail: actorEmail,
+      actorUserId: actor.id,
+      actorEmail: actor.email || '',
       actionType: 'role.assignment',
       entityType: 'user',
       entityId: uid,
       oldValueSummary: `Role: ${oldRole}`,
       newValueSummary: `Role: ${role}`,
       source: 'web-app',
-      ipPlaceholder: '127.0.0.1', // Replace with actual IP if available
     });
 
     // 6. Return a success response
@@ -66,13 +62,13 @@ export async function PUT(request: NextRequest, context: { params: Promise<{ uid
   }
 }
 
-export async function PATCH(request: NextRequest, context: { params: Promise<{ uid: string }> }) {
-  const { uid } = await context.params;
+export async function PATCH(request: NextRequest, context: { params: { uid: string } }) {
+  const { uid } = context.params;
   const { disabled } = (await request.json()) as { disabled: boolean };
 
   try {
     // 1. Authorize the request
-    const { uid: actorId } = await authorize(RESOURCES.USERS, ACTIONS.UPDATE);
+    const actor = await authorize(request, RESOURCES.USERS, ACTIONS.UPDATE);
 
     const userDocRef = db.collection('users').doc(uid);
     const userDoc = await userDocRef.get();
@@ -80,11 +76,9 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ u
 
     // 2. Prevent admins from editing super_admins
     if (userToEdit?.role === ROLES.SUPER_ADMIN) {
-        const adminUserDoc = await db.collection('users').doc(actorId).get();
-        const adminUser = adminUserDoc.data();
-        if (adminUser && adminUser.role !== ROLES.SUPER_ADMIN) {
-            return new NextResponse('Admins cannot modify Super Admins', { status: 403 });
-        }
+      if (actor.role !== ROLES.SUPER_ADMIN) {
+        return new NextResponse('Admins cannot modify Super Admins', { status: 403 });
+      }
     }
 
     // 3. Update the user's status in Firebase Authentication
@@ -97,17 +91,15 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ u
     });
 
     // 5. Audit log
-    const actorEmail = (await auth.getUser(actorId)).email || '';
     await logAuditEvent({
-        actorUserId: actorId,
-        actorEmail: actorEmail,
+        actorUserId: actor.id,
+        actorEmail: actor.email || '',
         actionType: 'user.status_change',
         entityType: 'user',
         entityId: uid,
         oldValueSummary: `Disabled: ${userToEdit?.disabled}`,
         newValueSummary: `Disabled: ${disabled}`,
         source: 'web-app',
-        ipPlaceholder: '127.0.0.1', // Replace with actual IP if available
       });
 
     // 6. Return a success response

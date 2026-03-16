@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { OpportunityStatus, ComplianceStatus, SourceType, OpportunityType } from "@/lib/types";
 
 function formatCurrency(value: number): string {
   return new Intl.NumberFormat("en-US", {
@@ -103,9 +104,9 @@ export default async function OpportunityDetailPage({ params }: PageProps) {
               <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                 <div className="space-y-3">
                   <div className="flex flex-wrap items-center gap-2">
-                    <TypeBadge type={opportunity.type} />
-                    <StatusBadge status={opportunity.status} />
-                    <ComplianceBadge status={opportunity.complianceStatus} />
+                    <TypeBadge type={opportunity.type as OpportunityType} />
+                    <StatusBadge status={opportunity.status as OpportunityStatus} />
+                    <ComplianceBadge status={opportunity.complianceStatus as ComplianceStatus} />
                   </div>
                   <h1 className="text-2xl font-bold text-foreground">
                     {opportunity.title}
@@ -115,7 +116,7 @@ export default async function OpportunityDetailPage({ params }: PageProps) {
                   </p>
                 </div>
                 <div className="flex flex-col items-end gap-2">
-                  <SourceBadge source={opportunity.source} />
+                  <SourceBadge source={opportunity.source as SourceType} />
                   <Button
                     variant="outline"
                     size="sm"

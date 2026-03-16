@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ROLES, Role } from '@/lib/roles';
+import { ROLES } from '@/lib/roles/constants';
+
+type Role = typeof ROLES[keyof typeof ROLES];
 
 interface User {
   uid: string;
