@@ -5,7 +5,7 @@ import { auth } from '@/lib/firebase/client';
 import { db } from '@/lib/firebase/client';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { ROLES } from '@/lib/roles';
-import { FirestoreData } from './firestore-data-model';
+import { User } from './firestore-data';
 
 export async function signInWithGoogle() {
   const provider = new GoogleAuthProvider();
@@ -17,7 +17,7 @@ export async function signInWithGoogle() {
     const userSnap = await getDoc(userRef);
 
     if (!userSnap.exists()) {
-      const newUser: FirestoreData.User = {
+      const newUser: User = {
         id: user.uid,
         displayName: user.displayName,
         email: user.email,

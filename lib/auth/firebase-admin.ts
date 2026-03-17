@@ -12,4 +12,4 @@ if (!admin.apps.length) {
   });
 }
 
-export const dbAdmin = admin.firestore();
+export const auth = admin.auth();

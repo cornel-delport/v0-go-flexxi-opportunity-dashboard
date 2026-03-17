@@ -1,7 +1,7 @@
 
 import { NextResponse, NextRequest } from 'next/server';
 import { authorize } from '@/lib/roles/utils';
-import { RESOURCES, ACTIONS, ROLES } from '@/lib/roles/constants';
+import { RESOURCES, ACTIONS } from '@/lib/roles';
 import { dbAdmin as db } from '@/lib/firebase/admin';
 import { logAuditEvent } from '@/lib/audit';
 

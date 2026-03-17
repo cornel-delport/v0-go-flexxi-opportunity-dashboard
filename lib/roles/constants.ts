@@ -1,25 +1,27 @@
-export const ROLES = {
-  SUPER_ADMIN: 'super_admin',
-  ADMIN: 'admin',
-  ANALYST: 'analyst',
-  USER: 'user',
-  PENDING: 'pending',
-} as const;
+export enum Resource {
+  USERS = "users",
+  OPPORTUNITIES = "opportunities",
+  REVIEWS = "reviews",
+  SETTINGS = "settings",
+}
+
+export enum Action {
+  CREATE = "create",
+  READ = "read",
+  UPDATE = "update",
+  DELETE = "delete",
+}
 
 export const RESOURCES = {
-  USERS: 'users',
-  OPPORTUNITIES: 'opportunities',
-  REVIEWS: 'reviews',
-  SETTINGS: 'settings',
+  USERS: Resource.USERS,
+  OPPORTUNITIES: Resource.OPPORTUNITIES,
+  REVIEWS: Resource.REVIEWS,
+  SETTINGS: Resource.SETTINGS,
 } as const;
 
 export const ACTIONS = {
-  CREATE: 'create',
-  READ: 'read',
-  UPDATE: 'update',
-  DELETE: 'delete',
+  CREATE: Action.CREATE,
+  READ: Action.READ,
+  UPDATE: Action.UPDATE,
+  DELETE: Action.DELETE,
 } as const;
-
-export type Role = typeof ROLES[keyof typeof ROLES];
-export type Resource = typeof RESOURCES[keyof typeof RESOURCES];
-export type Action = typeof ACTIONS[keyof typeof ACTIONS];

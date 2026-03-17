@@ -2,8 +2,7 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/lib/firebase-admin';
 import { logAuditEvent } from '@/lib/audit';
-import { FirestoreData } from '@/lib/firestore-data-model';
-import UserProfile = FirestoreData.UserProfile;
+import { UserProfile } from '@/lib/firestore-data';
 
 export async function POST(req: Request) {
   try {

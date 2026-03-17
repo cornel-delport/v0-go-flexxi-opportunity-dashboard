@@ -1,10 +1,11 @@
 import { auth } from '@/lib/firebase/client';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { userService } from '@/lib/services/user.service';
-import { UserRegistration, UserProfile } from '@/lib/types';
+import { User } from '@/lib/firestore-data';
+import { UserRegistration } from '@/lib/types';
 
 export const authService = {
-  async register(user: UserRegistration): Promise<UserProfile> {
+  async register(user: UserRegistration): Promise<User> {
     const response = await fetch('/api/auth', {
       method: 'POST',
       headers: {
@@ -23,6 +24,9 @@ export const authService = {
   },
 
   async signIn(credentials: Pick<UserRegistration, 'email' | 'password'>) {
+    if (!credentials.email) {
+      throw new Error('Email is required');
+    }
     const userCredential = await signInWithEmailAndPassword(auth, credentials.email, credentials.password);
 
     const idToken = await userCredential.user.getIdToken();

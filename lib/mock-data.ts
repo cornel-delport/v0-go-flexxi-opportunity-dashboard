@@ -1,6 +1,6 @@
-import { FirestoreData } from "./firestore-data-model";
+import { Opportunity, Review, SourceConfig } from "./types";
 
-export const mockOpportunities: (FirestoreData.Opportunity & { summary: string})[] = [
+export const mockOpportunities: Opportunity[] = [
   {
     id: "opp-001",
     title: "Manchester United Away Trip - Champions League",
@@ -8,8 +8,8 @@ export const mockOpportunities: (FirestoreData.Opportunity & { summary: string})
     status: "pending",
     source: "reddit",
     type: "post",
-    createdAt: new Date("2026-03-10T08:30:00Z"),
-    updatedAt: new Date("2026-03-14T10:15:00Z"),
+    createdAt: new Date("2026-03-10T08:30:00Z").toISOString(),
+    updatedAt: new Date("2026-03-14T10:15:00Z").toISOString(),
     complianceStatus: "verified",
     sourceUrl: "https://reddit.com/r/reddevils/comments/xyz",
     eventDate: "2026-04-15",
@@ -23,7 +23,7 @@ export const mockOpportunities: (FirestoreData.Opportunity & { summary: string})
   },
 ];
 
-export const mockReviews: FirestoreData.Review[] = [
+export const mockReviews: Review[] = [
   {
     id: "rev-001",
     opportunityId: "opp-002",
@@ -38,7 +38,7 @@ export const mockReviews: FirestoreData.Review[] = [
   },
 ];
 
-export const mockSources: FirestoreData.SourceConfig[] = [
+export const mockSources: SourceConfig[] = [
   {
     id: "src-001",
     name: "Reddit Sports Travel",

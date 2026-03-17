@@ -1,13 +1,25 @@
 import { NextRequest } from 'next/server';
 import { cookies } from 'next/headers';
-import { auth } from '@/lib/firebase-admin';
+import { auth } from '@/lib/auth/firebase-admin';
 import { dbAdmin } from '@/lib/firebase/admin';
-import { ROLES, Role, Resource, Action, RESOURCES, ACTIONS } from './constants';
-import { FirestoreData } from '@/lib/firestore-data-model';
-import UserProfile = FirestoreData.UserProfile;
+import { ROLES, Role } from '@/lib/roles';
+import { Resource, Action, RESOURCES, ACTIONS } from './constants';
+
+interface UserProfile {
+    id: string;
+    name: string | null;
+    displayName?: string | null;
+    photoURL?: string | null;
+    email: string | null;
+    avatar: string;
+    role: Role;
+    status: "active" | "inactive" | "pending";
+    lastLogin: string;
+    createdAt: string;
+  }
 
 const permissions: { [key in Role]?: { [key in Resource]?: Action[] } } = {
-    [ROLES.MEMBER]: {
+    [ROLES.USER]: {
         [RESOURCES.OPPORTUNITIES]: [ACTIONS.READ],
         [RESOURCES.REVIEWS]: [ACTIONS.CREATE, ACTIONS.READ],
       },
@@ -41,7 +53,8 @@ export const hasPermission = (userRole: Role, resource: Resource, action: Action
 };
 
 export const authorize = async (request: NextRequest, resource: Resource, action: Action): Promise<UserProfile> => {
-    const session = cookies().get('session')?.value || '';
+    const cookieStore = cookies();
+    const session = cookieStore.get('session')?.value || '';
 
     // 1. Check for session cookie
     if (!session) {

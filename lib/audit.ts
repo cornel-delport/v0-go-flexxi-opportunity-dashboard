@@ -1,6 +1,6 @@
 
 import { firestore } from './firebase-admin';
-import { AuditLog } from './firestore-data-model';
+import { AuditLog } from './firestore-data';
 import { Timestamp as FirestoreTimestamp } from 'firebase-admin/firestore';
 import { Timestamp } from 'firebase/firestore';
 

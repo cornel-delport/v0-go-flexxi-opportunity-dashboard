@@ -29,6 +29,10 @@ const statusConfig: Record<
     label: "Archived",
     className: "bg-muted text-muted-foreground",
   },
+  pending: {
+    label: "Pending",
+    className: "bg-yellow-500/20 text-yellow-500",
+  },
 };
 
 export function StatusBadge({ status }: StatusBadgeProps) {

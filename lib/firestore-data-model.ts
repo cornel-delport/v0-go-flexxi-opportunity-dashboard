@@ -1,121 +1,34 @@
+import { ROLES } from "@/lib/roles";
 
-export namespace FirestoreData {
-    export interface User {
-        id: string;
-        displayName: string | null;
-        email: string | null;
-        photoURL: string | null;
-        role: string;
-        organizationId: string | null;
-        teamId: string | null;
-        createdAt: any;
-        updatedAt: any;
-        lastLoginAt: any;
-        disabled?: boolean;
-    }
+export type OpportunityStatus = "new" | "under-review" | "approved" | "rejected" | "archived" | "pending";
+export type ComplianceStatus = "verified" | "pending" | "flagged" | "unknown";
+export type SourceType = "internal" | "external" | "referral" | "reddit" | "twitter" | "facebook";
+export type OpportunityType = "consulting" | "full-time" | "part-time" | "contract" | "fan-travel" | "concert-demand" | "supporter-trip" | "post";
 
-    export interface UserProfile extends User {
-        // Keeping it compatible with User for now
-    }
+export interface Opportunity {
+  id: string;
+  title: string;
+  location: string;
+  eventDate: string;
+  type: OpportunityType;
+  source: SourceType;
+  status: OpportunityStatus;
+  complianceStatus: ComplianceStatus;
+  groupSize: number;
+  estimatedRevenue: number;
+  confidence: number;
+  createdAt: string;
+}
 
-    export interface Opportunity {
-        id: string;
-        title: string;
-        description: string;
-        status: string;
-        source: string;
-        type: string;
-        createdAt: any;
-        updatedAt: any;
-        complianceStatus: string;
-        sourceUrl: string;
-        eventDate: string;
-        location: string;
-        groupSize: number;
-        estimatedRevenue: number;
-        confidence: number;
-        assignedTo: string;
-        tags: string[];
-        summary: string;
-    }
-
-    export interface Review {
-        id: string;
-        opportunityId: string;
-        userId: string;
-        rating: number;
-        comment: string;
-        createdAt: any;
-        status: string;
-        reviewer: string;
-        opportunityTitle: string;
-        notes: string;
-    }
-
-    export interface SourceConfig {
-        id: string;
-        name: string;
-        type: string;
-        config: any;
-        createdAt: any;
-        status: string;
-        opportunitiesFound: number;
-        lastSync: string;
-        url: string;
-    }
-
-    export interface AuditLog {
-        id: string;
-        actorUserId: string;
-        actorEmail: string;
-        actionType: string;
-        entityType: string;
-        entityId: string;
-        oldValueSummary?: string;
-        newValueSummary?: string;
-        timestamp: any;
-        source: string;
-        ipAddress: string;
-    }
-
-    export interface Audit extends AuditLog {}
-
-    export interface Session {
-        id: string;
-        userId: string;
-        sessionToken: string;
-        expiresAt: any;
-        createdAt: any;
-    }
-
-    export interface Integration {
-        id: string;
-        name: string;
-        type: string;
-        config: any;
-        createdAt: any;
-    }
-
-    export interface Webhook {
-        id: string;
-        url: string;
-        event: string;
-        createdAt: any;
-    }
-
-    export interface WorkerJob {
-        id: string;
-        name: string;
-        payload: any;
-        status: string;
-        createdAt: any;
-        updatedAt: any;
-    }
-
-    export interface Role {
-        id: string;
-        name: string;
-        permissions: string[];
-        createdAt: any;
-    }
+export interface User {
+  id: string;
+  name: string | null;
+  displayName?: string | null;
+  photoURL?: string | null;
+  email: string | null;
+  avatar: string;
+  role: keyof typeof ROLES;
+  status: "active" | "inactive" | "pending";
+  lastLogin: string;
+  createdAt: string;
 }

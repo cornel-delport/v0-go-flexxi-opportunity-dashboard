@@ -4,9 +4,10 @@ import {
   Plane,
   Music,
   Users,
-  Waves,
-  Home,
-  Ship,
+  Briefcase, 
+  Building, 
+  FileText, 
+  File, 
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -33,20 +34,30 @@ const typeConfig: Record<
     icon: Users,
     className: "text-blue-400",
   },
-  "surf-trip": {
-    label: "Surf Trip",
-    icon: Waves,
-    className: "text-cyan-400",
-  },
-  "expat-travel": {
-    label: "Expat",
-    icon: Home,
+  consulting: {
+    label: "Consulting",
+    icon: Briefcase,
     className: "text-amber-400",
   },
-  charter: {
-    label: "Charter",
-    icon: Ship,
+  "full-time": {
+    label: "Full-time",
+    icon: Building,
     className: "text-indigo-400",
+  },
+  "part-time": {
+    label: "Part-time",
+    icon: FileText,
+    className: "text-green-400",
+  },
+  contract: {
+    label: "Contract",
+    icon: File,
+    className: "text-purple-400",
+  },
+  post: {
+    label: "Post",
+    icon: File,
+    className: "text-gray-400",
   },
 };
 

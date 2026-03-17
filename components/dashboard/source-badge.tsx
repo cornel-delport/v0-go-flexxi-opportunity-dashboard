@@ -24,25 +24,20 @@ const sourceConfig: Record<
     className: "bg-blue-500/20 text-blue-400",
     icon: "F",
   },
-  instagram: {
-    label: "Instagram",
-    className: "bg-pink-500/20 text-pink-400",
+  internal: {
+    label: "Internal",
+    className: "bg-slate-500/20 text-slate-400",
     icon: "I",
   },
-  forum: {
-    label: "Forum",
+  external: {
+    label: "External",
     className: "bg-slate-500/20 text-slate-400",
-    icon: "W",
+    icon: "E",
   },
-  discord: {
-    label: "Discord",
-    className: "bg-indigo-500/20 text-indigo-400",
-    icon: "D",
-  },
-  telegram: {
-    label: "Telegram",
-    className: "bg-cyan-500/20 text-cyan-400",
-    icon: "T",
+  referral: {
+    label: "Referral",
+    className: "bg-slate-500/20 text-slate-400",
+    icon: "R",
   },
 };
 
